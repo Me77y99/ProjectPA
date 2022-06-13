@@ -1,22 +1,13 @@
+import * as Midd from "./middleware/midd_route";
 const express = require('express')
-const midd = require('./middleware/middleware.ts')
 const app = express()
 
 
 app.use(express.json());
 
-
-app.use(midd.myLogger);
-/*app.use(midd.requestTime);
-app.use(midd.checkToken);
-app.use(midd.verifyAndAuthenticate);
-app.use(midd.logErrors);
-app.use(midd.errorHandler);*/
-
 //Rotta per la creazione dell'evento
-app.post('/create-event', function (req: any, res: any) {
-  console.log(req);
-  res.json(req.body);
+app.post('/create-order', Midd.create_order_midd, function (req: any, res: any) {
+  res.send( `L'ordine ${req.body.ordine} è stato correttamente creato` );
 })
 
 app.get('/update-storage', function (req, res) {
