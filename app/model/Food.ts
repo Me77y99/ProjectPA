@@ -14,7 +14,7 @@ export const Food = sequelize.define('Food', {
         allowNull: false
     },
     quantity: {
-        type: DataTypes.INTEGER(),
+        type: DataTypes.DECIMAL(10,2),
         allowNull: false
     }
 }, 

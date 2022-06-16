@@ -8,5 +8,6 @@ export const create_order_midd = [
     midd_function.verifyJWT,
     midd_function.verifyJSON,
     midd_function.verifyUser,
-    midd_function.verifyRecipe
+    midd_function.verifyRecipe,
+    midd_function.verifyFoodAvailability
  ];

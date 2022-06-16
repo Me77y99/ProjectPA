@@ -1,4 +1,6 @@
+import { Food } from "../model/Food";
 import { Recipe } from "../model/Recipe";
+import { Recipe_foods } from "../model/Recipe_foods";
 const jwt = require('jsonwebtoken');
 require('dotenv').config({path : './../.env'})
 
@@ -48,7 +50,7 @@ export function verifyAdmin(req: any, res:any, next: any): void{
     }
 
 export async function verifyRecipe(req: any, res:any, next: any){
-    let recipe = await Recipe.findOne({
+    let recipe: any = await Recipe.findOne({
         where: {
           id: req.body.recipe_id
         }
@@ -60,9 +62,39 @@ export function verifyQuantityOrder(req: any, res:any, next: any){
     req.body.quantity > 0 ? next() : next("La quantità deve essere maggiore di 0");
 }
 
-export function verifyFoodAvailability(req: any, res:any, next: any){
-    req.body.quantity > 0 ? next() : next("La quantità deve essere maggiore di 0");
+export async function verifyFoodAvailability(req: any, res:any, next: any){
+    try{
+        let ingredients : Array<any> = await Recipe_foods.findAll(
+            {
+                attributes: {exclude: ['id']},
+                where:{
+                    recipe_id: req.body.recipe_id
+                }      
+            });
+
+        ingredients.forEach(async (ingredient) => {
+            let answer_quantity = (req.body.quantity * 100) / ingredient.dataValues.rate;
+            try{
+            let food : any = await Food.findOne(
+                {
+                    where:{
+                        id: ingredient.dataValues.food_id
+                    }      
+                });
+            
+            (answer_quantity > food.quantity) ? next("Quantità richiesta non disponibile in magazzino") : true;
+            } catch(error){
+                console.log(error);
+                
+            }
+         })
+        next();
+    }
+    catch (error){
+        console.log(error);
 }
+}
+
 
 
 

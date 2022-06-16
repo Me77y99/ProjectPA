@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Giu 16, 2022 alle 11:29
+-- Creato il: Giu 16, 2022 alle 13:01
 -- Versione del server: 10.4.17-MariaDB
 -- Versione PHP: 7.2.34
 
@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `foods` (
   `Id` int(10) NOT NULL,
   `Name` varchar(50) NOT NULL,
-  `Quantity` int(10) NOT NULL DEFAULT 0
+  `Quantity` decimal(10,2) NOT NULL DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -38,12 +38,12 @@ CREATE TABLE `foods` (
 --
 
 INSERT INTO `foods` (`Id`, `Name`, `Quantity`) VALUES
-(1, 'Soja ', 20),
-(2, 'Crusca ', 15),
-(3, 'Barbabietola', 50),
-(4, 'Mais', 100),
-(5, 'Orzo ', 10),
-(6, 'Fave', 35);
+(1, 'Soja ', '20.00'),
+(2, 'Crusca ', '15.00'),
+(3, 'Barbabietola', '50.00'),
+(4, 'Mais', '100.00'),
+(5, 'Orzo ', '10.00'),
+(6, 'Fave', '35.00');
 
 -- --------------------------------------------------------
 
@@ -64,8 +64,7 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`Id`, `Recipe_id`, `User_id`, `Quantity`, `Status`) VALUES
-(1, 1, 2, '400.00', 'CREATO'),
-
+(1, 1, 2, '400.00', 'CREATO');
 
 -- --------------------------------------------------------
 
