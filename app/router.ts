@@ -11,8 +11,7 @@ app.use(express.json());
 
 //Rotta per la creazione dell'evento
 app.post('/create-order', Midd.create_order_midd, async (req: any, res: any) => {
-  await Order.create(req.body);
-  res.json(req.body);
+  res.json( req.user);
 })
 
 app.get('/update-storage', function (req, res) {
