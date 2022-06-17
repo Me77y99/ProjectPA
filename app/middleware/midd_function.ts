@@ -63,42 +63,38 @@ export function verifyQuantityOrder(req: any, res:any, next: any){
 }
 
 export async function verifyFoodAvailability(req: any, res:any, next: any){
+    let foods_avaiable : Array<any> = [];
+    let foods_unavaiable : Array<any> = [];
     try{
-        let ingredients : Array<any> = await Recipe_foods.findAll(
+        let recipe_foods : Array<any> = await Recipe_foods.findAll(
             {
                 attributes: {exclude: ['id']},
                 where:{
                     recipe_id: req.body.recipe_id
                 }      
+            });        
+        let promise = new Promise((resolve, reject) => {  
+            recipe_foods.forEach((recipe_food) => {
+                let required_quantity_of_food : number = (req.body.quantity * recipe_food.dataValues.rate) / 100;
+                        
+                let food : any = Food.findOne({where:{ id: recipe_food.dataValues.food_id}});   
+                (required_quantity_of_food < food.quantity) ?  foods_avaiable.push(food):  foods_unavaiable.push(food) ;
+                resolve(foods_unavaiable);
+             });
+            
             });
 
-        ingredients.forEach(async (ingredient) => {
-            let answer_quantity = (req.body.quantity * 100) / ingredient.dataValues.rate;
-            try{
-            let food : any = await Food.findOne(
-                {
-                    where:{
-                        id: ingredient.dataValues.food_id
-                    }      
-                });
-            
-            (answer_quantity > food.quantity) ? next("Quantità richiesta non disponibile in magazzino") : true;
-            } catch(error){
-                console.log(error);
-                
-            }
-         })
-        next();
-    }
+        promise.then((foods_unavaiable) => {
+             next(`Non hai abbastanza quantità di ${foods_unavaiable}`);
+        });
+                  
+        }      
     catch (error){
         console.log(error);
 }
 }
 
+export function verifyRecipeFoodsExist(req: any, res:any, next: any){
+    
+}
 
-
-
-
-
-//verifica ricetta 
-//verifica disponibilità foods

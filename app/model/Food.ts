@@ -18,7 +18,7 @@ export const Food = sequelize.define('Food', {
         allowNull: false
     }
 }, 
-{
-    modelName: 'Food',
+{   
+    tableName: 'Foods',
     timestamps: false
 });
