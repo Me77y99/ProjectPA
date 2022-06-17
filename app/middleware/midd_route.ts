@@ -11,7 +11,7 @@ export const create_order_midd = [
     header_midd,
     midd_function.verifyUser,
     midd_function.verifyRecipe,
-    midd_function.verifyFoodAvailability
+    midd_function.verifyFoodAvailabilityForRecipes
  ];
 
 export const create_recipe = [
@@ -25,4 +25,11 @@ export const create_recipe = [
  export const order_status = [
     header_midd,
     midd_function.verifyAdminOrThatUser
+ ];
+
+ export const update_storage = [
+    header_midd,
+    midd_function.verifyUser,
+    midd_function.verifyFoodInDB,
+    midd_function.verifyFoodAvailabilityForStorage
  ];

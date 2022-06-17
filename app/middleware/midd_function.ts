@@ -62,7 +62,7 @@ export function verifyQuantityOrder(req: any, res:any, next: any){
     req.body.quantity > 0 ? next() : next("La quantità deve essere maggiore di 0");
 }
 
-export async function verifyFoodAvailability(req: any, res:any, next: any){
+export async function verifyFoodAvailabilityForRecipes(req: any, res:any, next: any){
     
     let foods_avaiable : Array<any> = [];
     let foods_unavaiable : Array<any> = [];
@@ -147,6 +147,45 @@ export async function verifyAdminOrThatUser(req: any, res:any, next: any){
         }
     });
     req.orderStatus=order.dataValues.status;
-    
+
     (req.user.role === "admin" || Number(req.user.id) === order.dataValues.user_id ) ? next() : next("Solo l'admin o l'utente che ha creato l'ordine possono visualizzarne lo status");
 }
+
+export async function verifyFoodAvailabilityForStorage(req: any, res:any, next: any){
+    let quantity = Number(req.body.quantity);
+    try{          
+        let food : any = await Food.findOne({where:{ name: req.body.name}});   
+        if(quantity < 0){
+            if(Math.abs(quantity) <= food.dataValues.quantity){
+                next();
+            }
+            else{
+                next("Attenzione! La quantità da ritirare eccede le giacenze in magazzino!")
+            }
+        } else if(quantity > 0) {
+            next();
+        } else if(quantity == 0) {
+            next("Inserire una quantità diversa da Zero!")
+        } else{
+            next("Inserire un cristo di numero!")
+        }
+    }      
+    catch (error){
+        console.log(error);
+    }    
+}
+
+export async function verifyFoodInDB(req: any, res:any, next: any){        
+    let food =  await Food.findOne({where: {name: req.body.name}});
+    (food) ? next() : next("L'alimento richiesto non è presente in catalogo!")
+}
+
+/*
+const getUserByUsername = username => {
+  return Viewer.findOne({
+    where: {username}
+  }).then(response => {
+    console.log(response.dataValues);//the object with the data I needreturn response.dataValues;
+  });
+};
+*/
