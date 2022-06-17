@@ -25,3 +25,5 @@ export const Recipe_foods = sequelize.define('Recipe_foods', {
     modelName: 'Recipe_foods',
     timestamps: false
 });
+
+Recipe_foods.removeAttribute('id');

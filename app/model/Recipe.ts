@@ -7,7 +7,11 @@ export const Recipe = sequelize.define('Recipe', {
     id: {
         type: DataTypes.INTEGER(),
         primaryKey: true,
-        autoIncrement: true
+        autoIncrement: true,
+        get() {
+            const rawValue = this.getDataValue('id');
+            return rawValue ? rawValue : null;
+        }
     },
     name: {
         type: DataTypes.STRING(50),

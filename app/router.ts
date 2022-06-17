@@ -6,14 +6,11 @@ import { Recipe } from "./model/Recipe";
 const express = require('express')
 const app = express()
 
-
-
 app.use(express.json());
-
 
 //Rotta per la creazione dell'evento
 app.post('/create-order', Midd.create_order_midd, async (req: any, res: any) => {
-  res.json(req.user);
+  Contr.createOrder(req,res);
 })
 
 //Rotta per la creazione di una ricetta
@@ -22,16 +19,16 @@ app.post('/create-recipe', Midd.create_recipe, function (req:any, res:any) {
 })
 
 app.get('/update-storage', function (req, res) {
-    res.send('Hello World')
+  res.send('Hello World')
   })
 
 app.get('/check-availability', function (req, res) {
   res.send('Hello World')
 })
 
-app.get('/order-state', function (req, res) {
-    res.send('Hello World')
-  })
+app.get('/order-state', Midd.order_status, function (req, res) {
+  Contr.orderState(req,res);
+})
 
 
 

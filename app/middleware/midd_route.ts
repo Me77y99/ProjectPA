@@ -17,4 +17,12 @@ export const create_order_midd = [
 export const create_recipe = [
     header_midd,
     midd_function.verifyAdmin,
+    midd_function.verifyRateSum,
+    midd_function.verifyFoodsUnique,
+    midd_function.verifyFoodsInDB,
+ ];
+
+ export const order_status = [
+    header_midd,
+    midd_function.verifyAdminOrThatUser
  ];
