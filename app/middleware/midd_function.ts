@@ -2,11 +2,16 @@ import { Food } from "../model/Food";
 import { Order } from "../model/Order";
 import { Recipe } from "../model/Recipe";
 import { Recipe_foods } from "../model/Recipe_foods";
+import { ErrorFactory , ErrEnum } from "../factory/factoryError";
 const jwt = require('jsonwebtoken');
 require('dotenv').config({path : './../.env'})
 
+let factory:ErrorFactory  = new ErrorFactory();
+
 export function verifyHeaderAuthorization (req: any, res:any, next: any): void{
-    req.headers.authorization ? next() : next("Il campo autorizzazione non è presente nella intestazione");
+    req.headers.authorization ? next() : 
+    next(res.status(factory.getError(ErrEnum.HeaderAuthEmpty).error_code)
+        .send(factory.getError(ErrEnum.HeaderAuthEmpty).getMsg()));
 }
 
 export function verifyHeaderContentType(req: any, res:any, next: any): void{

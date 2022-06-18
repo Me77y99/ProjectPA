@@ -29,7 +29,7 @@ import { Recipe_foods } from "../model/Recipe_foods";
             });
         }
                 
-        res.status(201).send(`Ricetta ${recipe.dataValues.name} creata correttamente`)
+        res.sendStatus(201).send(`Ricetta ${recipe.dataValues.name} creata correttamente`)
     }
     
     export async function updateStorage(req: any, res: any){
