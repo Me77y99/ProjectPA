@@ -20,8 +20,12 @@ app.post('/update-storage', Midd.update_storage, function (req: any, res: any) {
   Contr.updateStorage(req,res);
   })
 
-app.get('/check-availability', function (req, res) {
-  res.send('Hello World')
+app.get('/check-availability-all', Midd.check_availability_all, function (req, res) {
+  Contr.checkAvailabilityAll(req,res);
+})
+
+app.get('/check-availability', Midd.check_availability,  function (req, res) {
+  Contr.checkAvailability(req,res);
 })
 
 app.get('/order-state', Midd.order_status, function (req: any, res: any) {

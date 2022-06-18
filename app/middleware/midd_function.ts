@@ -106,43 +106,40 @@ export function verifyRateSum(req: any, res:any, next: any){
 }
 
 export function verifyFoodsUnique(req: any, res:any, next: any){
+    let foods_repeated_names : Array<String> = req.body.recipe_foods.map((item: any) => item.name.toUpperCase())
+    .filter((value : string, index :number, self :Array<String>) => self.indexOf(value) != index) // array con nomi ripetuti con possibilità doppioni
+    .filter((value : string, index :number, self :Array<String>) => self.indexOf(value) === index); // array con nomi ripetuti univoci
     
-    let recipe_foods_names :Array<String> = [];
-    for(let recipe_food of req.body.recipe_foods){
-        recipe_foods_names.push(recipe_food.name.toUpperCase());
-    }
-    let set = new Set(recipe_foods_names);
-    let foods_repeated = recipe_foods_names.filter( item => {
-        if(set.has(item)){
-            set.delete(item);
-        } else{
-            return item;
-        }
-    });
-
-    let repeated: Set<String> =new Set(foods_repeated);
-    (repeated.size > 0) ? next(`Nella ricetta i seguenti elementi sono ripetuti più volte: ${Array.from(repeated)}`) : next();
+    (foods_repeated_names.length > 0) ? next(`Nella ricetta i seguenti elementi sono ripetuti più volte: ${Array.from(foods_repeated_names)}`) : next();
 }
 
 //CONTROLLARE EVENTUALMENTE CON OR IN SEQUELIZE
 export async function verifyFoodsInDB(req: any, res:any, next: any){
     let count: number = 0;
-    let recipe_foods_names :Array<String> = [];
+    let recipe_foods_names_unavailable :Array<String> = [];
     
-    for(let recipe_food of req.body.recipe_foods){
-        recipe_foods_names.push(recipe_food.name.toUpperCase());
-    }
-    
-    for(let food of recipe_foods_names){
+    //se richiesta viene da /create-recipe non succede nulla (già verificata univocità)
+    //se richiesta viene da /check-availability elimina doppioni (evitiamo di far ripetere la ricerca nel caso in cui l'utente fornisca doppioni nella ricerca)
+    try {
+    let foods_unique_name :Array<String> = req.body.recipe_foods.map((item:any) => item.name.toUpperCase())
+    .filter((value : string, index :number, self :Array<String>) => self.indexOf(value) === index); 
+  
+    for(let food of foods_unique_name){
         let instance: any = await Food.count({
             where:{
                 name: food
             }      
         });
-        (instance===1) ? count+=1 : true;
+        (instance===1) ? count+=1 : recipe_foods_names_unavailable.push(food); 
+        // se alimento è trovato incrementa count altrimenti messo nell'array dei non disponibili
+        // controllo di (instance===1) perchè nella tabella Food non è previsto che ci siano record con stesso nome 
     }
-    console.log(count);
-    (count === recipe_foods_names.length) ? next() : next("All'interno della ricetta sono elencati degli ingredienti non presenti in catalogo!")
+
+    (count === foods_unique_name.length) ? next() : next(`Gli ingredienti: ${recipe_foods_names_unavailable} non sono presenti in catalogo!`)
+} catch(error){
+    console.log(error);
+    next(error);
+}
 }
 
 export async function verifyAdminOrThatUser(req: any, res:any, next: any){

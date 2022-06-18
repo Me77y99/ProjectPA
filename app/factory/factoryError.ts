@@ -1,16 +1,16 @@
-export interface  ErrorMsg {
+export interface  Error {
     error_code:number;
     getMsg():string;
 }
 
-export class GenericError implements ErrorMsg {
+export class GenericError implements Error {
     error_code: number;
     constructor(){this.error_code = 400;}
     getMsg():string {
         return "this is a generic error";
     }
 }
-export class Forbidden implements ErrorMsg {
+export class Forbidden implements Error {
     error_code: number;
     constructor(){this.error_code = 400;}
     public getMsg():string {
@@ -18,7 +18,7 @@ export class Forbidden implements ErrorMsg {
     }
 }
 
-export class BadRequest implements ErrorMsg {
+export class BadRequest implements Error {
     error_code: number;
     constructor(){this.error_code = 400;}
     public getMsg():string {
@@ -26,7 +26,7 @@ export class BadRequest implements ErrorMsg {
     }
 }
 
-export class Unauthorized implements ErrorMsg {
+export class Unauthorized implements Error {
     error_code: number;
     constructor(){this.error_code = 400;}
     public getMsg():string {
@@ -34,7 +34,7 @@ export class Unauthorized implements ErrorMsg {
     }
 }
 
-export class HeaderAuthEmpty implements ErrorMsg {
+export class HeaderAuthEmpty implements Error {
     error_code: number;
     constructor(){this.error_code = 401;}
     public getMsg():string {
@@ -55,8 +55,8 @@ export enum ErrEnum {
 
 export class ErrorFactory {
     constructor(){}
-    getError (type:ErrEnum):ErrorMsg{
-        let retval:ErrorMsg = null;
+    getError (type:ErrEnum):Error{
+        let retval:Error = null;
         switch (type){
             case ErrEnum.Generic:
                 retval = new GenericError();
@@ -71,8 +71,8 @@ export class ErrorFactory {
                 retval = new Unauthorized();
                 break;
             case ErrEnum.HeaderAuthEmpty :
-                    retval = new HeaderAuthEmpty();
-                    break;                 
+                retval = new HeaderAuthEmpty();
+                break;                 
         }
         return retval;
     }

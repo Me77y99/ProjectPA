@@ -33,3 +33,14 @@ export const create_recipe = [
     midd_function.verifyFoodInDB,
     midd_function.verifyFoodAvailabilityForStorage
  ];
+
+ export const check_availability_all = [
+   header_midd,
+   midd_function.verifyUser
+];
+
+export const check_availability = [
+   header_midd,
+   midd_function.verifyUser,
+   midd_function.verifyFoodsInDB,
+];
