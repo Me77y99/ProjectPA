@@ -9,8 +9,7 @@ let factory:ErrorFactory  = new ErrorFactory();
 
 //FUNZIONE MIDDLEWARE PER VERIFICARE LA PRESENZA DELL'HEADER AUTHORIZATION NELLA REQUEST
 export function verifyHeaderAuthorization (req: any, res:any, next: any): void{
-    req.headers.authorization ? next() : 
-    next(factory.getErrorResponse(ErrEnum.HeaderAuthEmpty , res));
+    req.headers.authorization ? next() : next(factory.getErrorResponse(ErrEnum.HeaderAuthEmpty , res));
 }
 
 //FUNZIONE MIDDLEWARE PER VERIFICARE LA PRESENZA DELL'HEADER CONTENT-TYPE NELLA REQUEST
@@ -33,16 +32,13 @@ export function verifyToken(req: any, res:any, next: any): void{
 //FUNZIONE MIDDLEWARE PER DECODIFICARE IL TOKEN JWT E INSERIRLO IN APPOSITO ATTRIBUTO DELLA REQUEST
 export function verifyJWT(req: any, res:any, next: any): void{
     let decoded = jwt.verify(req.token, process.env.SECRET_KEY);
-    (decoded) ? (req.user = decoded , next()) : factory.getErrorResponse(ErrEnum.BadTokenJWT , res)
+    if(decoded !== null)
+        req.user = decoded;
+    next();
 }
 
 //FUNZIONE MIDDLEWARE PER VERIFICARE CHE IL BODY DELLA REQUEST SIA UN TESTO IN FORMATO JSON
 export function verifyJSON(req: any, res:any, next: any): void{
-    try {
         req.body = JSON.parse(JSON.stringify(req.body));
         next();
-    } catch (error) { 
-        console.log(error);
-        next(factory.getErrorResponse(ErrEnum.MalformedJSON , res));
-    }
 }

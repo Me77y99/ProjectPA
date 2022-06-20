@@ -66,13 +66,7 @@ export class BadTokenJWT implements Error {
     }
 }
 
-export class MalformedJSON implements Error {
-    error_code: number;
-    constructor(){this.error_code = 401;}
-    public getMsg():string {
-        return "JSON malformato";
-    }
-}
+
 
 
 export enum ErrEnum {
@@ -84,8 +78,7 @@ export enum ErrEnum {
     HeaderAuthEmpty,
     BadHeaderContentType,
     UndefinedToken,
-    BadTokenJWT,
-    MalformedJSON
+    BadTokenJWT
 }
 
 export class ErrorFactory {
@@ -120,10 +113,7 @@ export class ErrorFactory {
                 break;
             case ErrEnum.BadTokenJWT :
                 retval = new BadTokenJWT();
-                break;  
-            case ErrEnum.MalformedJSON :
-                retval = new MalformedJSON();
-                break;            
+                break;             
         }
         return retval;
     }
