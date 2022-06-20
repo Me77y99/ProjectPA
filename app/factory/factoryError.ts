@@ -42,6 +42,37 @@ export class HeaderAuthEmpty implements Error {
     }
 }
 
+export class BadHeaderContentType implements Error {
+    error_code: number;
+    constructor(){this.error_code = 401;}
+    public getMsg():string {
+        return "Il content-type della richiesta non è corretto";
+    }
+}
+
+export class UndefinedToken implements Error {
+    error_code: number;
+    constructor(){this.error_code = 403;}
+    public getMsg():string {
+        return "Token non definito";
+    }
+}
+
+export class BadTokenJWT implements Error {
+    error_code: number;
+    constructor(){this.error_code = 401;}
+    public getMsg():string {
+        return "Token JWT non corretto";
+    }
+}
+
+export class MalformedJSON implements Error {
+    error_code: number;
+    constructor(){this.error_code = 401;}
+    public getMsg():string {
+        return "JSON malformato";
+    }
+}
 
 
 export enum ErrEnum {
@@ -50,10 +81,18 @@ export enum ErrEnum {
     Forbidden,
     BadRequest,
     Unauthorized,
-    HeaderAuthEmpty
+    HeaderAuthEmpty,
+    BadHeaderContentType,
+    UndefinedToken,
+    BadTokenJWT,
+    MalformedJSON
 }
 
 export class ErrorFactory {
+    getErrorResponse(error_type: ErrEnum , res: any) {
+        return res.status(this.getError(error_type).error_code)
+        .send(this.getError(error_type).getMsg())
+    }
     constructor(){}
     getError (type:ErrEnum):Error{
         let retval:Error = null;
@@ -72,16 +111,23 @@ export class ErrorFactory {
                 break;
             case ErrEnum.HeaderAuthEmpty :
                 retval = new HeaderAuthEmpty();
-                break;                 
+                break;    
+            case ErrEnum.BadHeaderContentType :
+                retval = new BadHeaderContentType();
+                break;  
+            case ErrEnum.UndefinedToken :
+                retval = new UndefinedToken();
+                break;
+            case ErrEnum.BadTokenJWT :
+                retval = new BadTokenJWT();
+                break;  
+            case ErrEnum.MalformedJSON :
+                retval = new MalformedJSON();
+                break;            
         }
         return retval;
     }
 }
 
-/*let factory:ErrorFactory  = new ErrorFactory();
-
-if(errCode != ErrEnum.None){
-    console.log(factory.getError(errCode).getMsg());
-}*/
 
 

@@ -5,16 +5,17 @@ require('dotenv').config({path : './../.env'})
 let factory:ErrorFactory  = new ErrorFactory();
 
 
+
+
 //FUNZIONE MIDDLEWARE PER VERIFICARE LA PRESENZA DELL'HEADER AUTHORIZATION NELLA REQUEST
 export function verifyHeaderAuthorization (req: any, res:any, next: any): void{
     req.headers.authorization ? next() : 
-    next(res.status(factory.getError(ErrEnum.HeaderAuthEmpty).error_code)
-        .send(factory.getError(ErrEnum.HeaderAuthEmpty).getMsg()));
+    next(factory.getErrorResponse(ErrEnum.HeaderAuthEmpty , res));
 }
 
 //FUNZIONE MIDDLEWARE PER VERIFICARE LA PRESENZA DELL'HEADER CONTENT-TYPE NELLA REQUEST
 export function verifyHeaderContentType(req: any, res:any, next: any): void{
-    req.headers["content-type"] == "application/json" ? next() : next("Il content-type della richiesta non è corretto");
+    req.headers["content-type"] == "application/json" ? next() : next(factory.getErrorResponse(ErrEnum.BadHeaderContentType , res));
 }
 
 //FUNZIONE MIDDLEWARE PER VERIFICARE LA PRESENZA DEL TOKEN JWT ALL'INTERO DELL'HEADER AITHORIZATION ED ESTRAZIONE DEL TOKEN JWT IN APPOSITO ATTRIBUTO DELLA REQUEST
@@ -25,16 +26,14 @@ export function verifyToken(req: any, res:any, next: any): void{
         req.token=bearerToken;
         next();
     }else{
-        res.sendStatus(403);
+        res.sendStatus(factory.getErrorResponse(ErrEnum.UndefinedToken , res));
     }
 }
 
 //FUNZIONE MIDDLEWARE PER DECODIFICARE IL TOKEN JWT E INSERIRLO IN APPOSITO ATTRIBUTO DELLA REQUEST
 export function verifyJWT(req: any, res:any, next: any): void{
     let decoded = jwt.verify(req.token, process.env.SECRET_KEY);
-  if(decoded !== null)
-    req.user = decoded;
-    next()
+    (decoded) ? (req.user = decoded , next()) : factory.getErrorResponse(ErrEnum.BadTokenJWT , res)
 }
 
 //FUNZIONE MIDDLEWARE PER VERIFICARE CHE IL BODY DELLA REQUEST SIA UN TESTO IN FORMATO JSON
@@ -44,6 +43,6 @@ export function verifyJSON(req: any, res:any, next: any): void{
         next();
     } catch (error) { 
         console.log(error);
-        next();
+        next(factory.getErrorResponse(ErrEnum.MalformedJSON , res));
     }
 }

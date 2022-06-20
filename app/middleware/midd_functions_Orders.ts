@@ -108,8 +108,9 @@ Verifica che la ricetta espressa all'interno del body della request sia presente
 export async function verifyRecipe(req: any, res:any, next: any){
     let recipe: any = await Recipe.findOne({
         where: {
-          id: req.body.recipe_id
+          name: req.body.recipe_name
         }
       });
-    recipe ? next() : next("La ricetta non è presente in catalogo");
+    
+    recipe ? (req.body.recipe_id = recipe.dataValues.id, next()) : next("La ricetta non è presente in catalogo");
 }
