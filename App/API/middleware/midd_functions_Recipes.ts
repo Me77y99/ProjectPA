@@ -1,4 +1,4 @@
-import { Recipe } from "../model/Recipe";
+import { Recipe } from "../../model/Recipe";
 
 /*
 FUNZIONE MIDDLEWARE PER CONTROLLARE CHE LA RICETTA DI CUI SI È RICHIESTA LA CREAZIONE NON ABBIA LO STESSO NOME DI UNA RICETTA PRE-ESISTENTE

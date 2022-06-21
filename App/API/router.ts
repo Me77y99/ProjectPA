@@ -1,4 +1,4 @@
-require('dotenv').config({path : '../.env'})
+require('dotenv').config({path : './../../.env'})
 import * as Contr from "./controller/Controller";
 import * as Midd from "./middleware/midd_route"
 const express = require('express')
@@ -35,5 +35,5 @@ app.post('/create-recipe', Midd.create_recipe, function (req: any, res: any) {
 app.post('/update-storage', Midd.update_storage, function (req: any, res: any) {
   Contr.updateStorage(req,res);
   })
-
+  
 app.listen(3000)

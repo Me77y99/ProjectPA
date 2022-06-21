@@ -6,7 +6,7 @@ export class ConnectionDb {
     private static _instance: ConnectionDb;
 	private connection: Sequelize;
 
-
+    
     private constructor() {
 		this.connection = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, 
         {
@@ -17,6 +17,7 @@ export class ConnectionDb {
 	}
 
 	public static getInstanceConnection(): Sequelize {
+        console.log(process.env.DB_NAME);
         if (!ConnectionDb._instance) {
             this._instance = new ConnectionDb();
         }

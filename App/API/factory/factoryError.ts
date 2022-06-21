@@ -66,9 +66,6 @@ export class BadTokenJWT implements Error {
     }
 }
 
-
-
-
 export enum ErrEnum {
     None,
     Generic,

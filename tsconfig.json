@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "app-compiled",
-        "rootDir": "app"
+        "outDir": "./App-compiled",
+        "rootDir": "./App"
     }
 }
