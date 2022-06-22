@@ -31,13 +31,9 @@ Dopo 10 sec: Sto uscendo da zona Alimento 3, sono le ore tot
 Ho finito di processare l'ordine
 */
 
-
-const formatMsg = function(data){
-    return {"value": data, "timestamp": Date.now()};
-}
-
 const Client_1 = webSocket(`ws://localhost:${process.env.WS_PORT}`); //Operatore
 const Client_2 = webSocket(`ws://localhost:${process.env.WS_PORT}`); //Bilancia a bordo macchina
+
 
 Client_1.subscribe({
   next: msg => console.log(`Client_1 - message received from server: ` + msg), // Called whenever there is a message from the server.
@@ -53,8 +49,28 @@ Client_2.subscribe({
   complete: () => console.log('complete') // Called when connection is closed (for whatever reason).
 });
 
-//operation legenda: 0 - Ordine preso in carico; 1 - ingresso zona di carico; 2 - uscita zona di carico; 3 - ordine completato;
-Client_1.next({client_id: 1, operation: 0, id_order: 1});
-Client_1.next({client_id: 1, operation: 1, id_order: 1, id_alimento: 6});
-Client_1.next({client_id: 1, operation: 1, id_order: 1, id_alimento: 2});
-Client_1.next({client_id: 2, weight: 12});
+//operation legenda: 0 - Ordine preso in carico; 1 - ingresso zona di carico; 2 - uscita zona di carico; 3 - ordine completato; 4 - pesa dell'alimento
+async function communicateToServer(){
+  let weight : number = 0;
+  await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 0, id_order: 1}));}, 5000));
+
+  setInterval(() => {(Client_2.next({ operation: 4, weight: weight}));}, 1000);
+
+  await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 1, id_order: 1, id_alimento: 1}));}, 5000));
+  weight += 10;
+  await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 2, id_order: 1, id_alimento: 1}));}, 5000));
+
+  await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 1, id_order: 1, id_alimento: 2}));}, 5000));
+  weight += 10;
+  await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 2, id_order: 1, id_alimento: 2}));}, 5000));
+
+  await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 1, id_order: 1, id_alimento: 3}));}, 5000));
+  await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 2, id_order: 1, id_alimento: 3}));}, 5000));
+
+  await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 3, id_order: 1}));}, 5000));
+
+}
+
+communicateToServer();
+
+  //Client_2.next({ operation: 4,client_id: 2, weight: 12}); 
