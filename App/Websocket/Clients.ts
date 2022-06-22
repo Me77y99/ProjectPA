@@ -53,6 +53,6 @@ Client_2.subscribe({
   complete: () => console.log('complete') // Called when connection is closed (for whatever reason).
 });
 
-
-Client_1.next({ Operation: "Presa in carico", Id_order: "1" });
-Client_1.next({ Operation: "Entrata zona carico", id_order: "1", id_alimento: 1});
+//operation legenda: 0 - Ordine preso in carico; 1 - ingresso zona di carico; 2 - uscita zona di carico; 3 - ordine completato;
+Client_1.next({ operation: 0, id_order: 1});
+Client_1.next({ operation: 1, id_order: 1, id_alimento: 1});

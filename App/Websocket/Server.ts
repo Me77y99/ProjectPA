@@ -10,9 +10,9 @@ async function getChargingInfo(){
     
     let infoIngredients: Array<any> = [];
     let err_per: number = Number(process.env.ERROR_PERCENTAGE);
-    let quantityFoodToTake: number, quantityMin: number, quantityMax: number;
+    let quantityFoodToTake: number, quantityMin: number, quantityMax: number, generalMin: number = 0, generalMax: number = 0;
 
-    let order : any = await Order.findOne({where:{id: recived.Id_order}, raw: true, plain:true});
+    let order : any = await Order.findOne({where:{id: recived.id_order}, raw: true, plain:true});
     let recipeFoods : Array<any> = await Recipe_foods.findAll({where: {recipe_id: order.recipe_id}, raw:true});
     console.log(order, recipeFoods);
 
@@ -21,11 +21,28 @@ async function getChargingInfo(){
       console.log(quantityFoodToTake);
       quantityMin = quantityFoodToTake - (quantityFoodToTake * err_per ) /100;
       quantityMax = quantityFoodToTake + (quantityFoodToTake * err_per ) /100;
-      return({food_id: food.food_id, sort: food.sort, min: quantityMin, max: quantityMax})
+      generalMin = generalMin + quantityMin;
+      generalMax = generalMax + quantityMax;
+      return({food_id: food.food_id, sort: food.sort, generalMin: generalMin, generalMax: generalMax})
     })
 
     console.log(infoIngredients);  
 };
+
+function checkSorting(){
+  //Controlla che l'id del food inviato dal client che entra in una zonda di carico di un alimento
+  //In caso di ingresso in una zona errata cambia lo status dell'ordine in FALLITO e arresta il client
+}
+
+function checkQuantity(){
+  //Controlla che l'ultima quantità misurata dalla bilancia rientri nei limiti Min Max dello step dell'ordine
+  //Viene chiamata nel momento in cui il Client_1 comunica l'uscita dalla zona di carico
+  //In caso di peso non conforme cambia lo status dell'ordine in FALLITO e arresta il client
+}
+
+function completeOrder(){
+  //Cambia lo status dell'ordine in COMPLETATO nel momento in cui il Client_1 comunica di aver terminato tutte le operazioni di carico
+}
 
 const wss = new WebSocketServer({port: process.env.WS_PORT});
 let recived: any;
@@ -42,7 +59,17 @@ wss.on('connection', function connection(ws: any) {
   ws.send(JSON.stringify("Connessione Stabilita"));
   ws.on('message', async function message(data) {
     recived = JSON.parse(data);
-    getChargingInfo();
+    switch(recived.operation){
+      case 0 : getChargingInfo();
+               break;
+      case 1 : checkSorting();
+               console.log(`Sei entrato nella zona dell'alimento con id: ${recived.id_alimento}`)
+               break;
+      case 2 : checkQuantity();
+               break;  
+      case 3 : completeOrder();
+               break;
+    }         
   });
 });
 
