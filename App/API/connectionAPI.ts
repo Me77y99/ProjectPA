@@ -17,7 +17,6 @@ export class ConnectionDb {
 	}
 
 	public static getInstanceConnection(): Sequelize {
-        console.log(process.env.DB_NAME);
         if (!ConnectionDb._instance) {
             this._instance = new ConnectionDb();
         }

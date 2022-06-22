@@ -1,7 +1,6 @@
 import { Observable, merge, map , filter} from 'rxjs';
-import { WebSocketSubject, webSocket,  } from 'rxjs/webSocket';
+import { WebSocketSubject, webSocket} from 'rxjs/webSocket';
 require('dotenv').config({path : './../../.env'});
-
 (global as any).WebSocket = require('ws');
 
 
@@ -41,19 +40,19 @@ const Client_1 = webSocket(`ws://localhost:${process.env.WS_PORT}`); //Operatore
 const Client_2 = webSocket(`ws://localhost:${process.env.WS_PORT}`); //Bilancia a bordo macchina
 
 Client_1.subscribe({
-  next: msg => console.log('message received A: ' + msg), // Called whenever there is a message from the server.
+  next: msg => console.log(`Client_1 - message received from server: ` + msg), // Called whenever there is a message from the server.
   error: err => console.log(err), // Called if at any point WebSocket API signals some kind of error.
   complete: () => console.log('complete') // Called when connection is closed (for whatever reason).
 });
 
-/*
+
+
 Client_2.subscribe({
-  next: msg => console.log('message received B: ' + msg), // Called whenever there is a message from the server.
+  next: msg => console.log(`Client_2 - message received from server: ` + msg), // Called whenever there is a message from the server.
   error: err => console.log(err), // Called if at any point WebSocket API signals some kind of error.
   complete: () => console.log('complete') // Called when connection is closed (for whatever reason).
 });
-*/
+
 
 Client_1.next({ Operation: "Presa in carico", Id_order: "1" });
-//Client_1.next({ message: '"Operation":"Entrata zona carico", "id_order": "1", "id_alimento": 1' });
-
+Client_1.next({ Operation: "Entrata zona carico", id_order: "1", id_alimento: 1});

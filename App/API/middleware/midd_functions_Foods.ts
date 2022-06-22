@@ -1,4 +1,4 @@
-import { Food } from "../../model/Food";
+import { Food } from "../model/Food";
 
 /*
 FUNZIONE MIDDLEWARE PER IL CONTROLLO DELLA GIACENZA ALL'INTERNO DEL MAGAZZINO PER EFFETTUARE OPERAZIONI DI MODIFICA

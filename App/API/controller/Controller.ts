@@ -1,7 +1,7 @@
-import { Order } from "../../model/Order";
-import { Recipe } from "../../model/Recipe";
-import { Food } from "../../model/Food";
-import { Recipe_foods } from "../../model/Recipe_foods";
+import { Order } from "../model/Order";
+import { Recipe } from "../model/Recipe";
+import { Food } from "../model/Food";
+import { Recipe_foods } from "../model/Recipe_foods";
 
 //CONTROLLER DI VISUALIZZAZIONE GIACENZA DEGLI ALIMENTI, RICHIESTI DALL'UTENTE, IN MAGAZZINO
 //La funzione crea un array di stringhe contenente tutti i nomi degli alimenti richiesti dall'utente,

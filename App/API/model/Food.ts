@@ -1,4 +1,4 @@
-import { ConnectionDb } from '../connection';
+import { ConnectionDb } from '../connectionAPI';
 import { DataTypes, Sequelize } from 'sequelize';
 
 const sequelize: Sequelize = ConnectionDb.getInstanceConnection();
