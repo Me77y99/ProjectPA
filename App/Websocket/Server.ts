@@ -4,13 +4,16 @@ import {WebSocketServer} from 'ws';
 import { Order } from './model/Order';
 import { Recipe_foods } from './model/Recipe_foods';
 
-
+const wss = new WebSocketServer({port: process.env.WS_PORT});
+let recived: any;
+let weight: number;
 
 async function getChargingInfo(){
     
     let infoIngredients: Array<any> = [];
     let err_per: number = Number(process.env.ERROR_PERCENTAGE);
     let quantityFoodToTake: number, quantityMin: number, quantityMax: number, generalMin: number = 0, generalMax: number = 0;
+    
 
     let order : any = await Order.findOne({where:{id: recived.id_order}, raw: true, plain:true});
     let recipeFoods : Array<any> = await Recipe_foods.findAll({where: {recipe_id: order.recipe_id}, raw:true});
@@ -44,9 +47,6 @@ function completeOrder(){
   //Cambia lo status dell'ordine in COMPLETATO nel momento in cui il Client_1 comunica di aver terminato tutte le operazioni di carico
 }
 
-const wss = new WebSocketServer({port: process.env.WS_PORT});
-let recived: any;
-
 const foo = new Observable(subscriber => {
   setInterval(() => {
     subscriber.next("Connessione Stabilita"); // happens asynchronously
@@ -59,17 +59,23 @@ wss.on('connection', function connection(ws: any) {
   ws.send(JSON.stringify("Connessione Stabilita"));
   ws.on('message', async function message(data) {
     recived = JSON.parse(data);
-    switch(recived.operation){
-      case 0 : getChargingInfo();
-               break;
-      case 1 : checkSorting();
-               console.log(`Sei entrato nella zona dell'alimento con id: ${recived.id_alimento}`)
-               break;
-      case 2 : checkQuantity();
-               break;  
-      case 3 : completeOrder();
-               break;
-    }         
+    
+    if(recived.client_id === 1){
+      switch(recived.operation){
+        case 0 : getChargingInfo();
+                break;
+        case 1 : checkSorting();
+                console.log(`Sei entrato nella zona dell'alimento con id: ${recived.id_alimento}`)
+                break;
+        case 2 : checkQuantity();
+                break;  
+        case 3 : completeOrder();
+                break;
+      }   
+    } else {
+      weight = recived.quantity;
+    }      
+  
   });
 });
 

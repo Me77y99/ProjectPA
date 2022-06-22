@@ -54,5 +54,5 @@ Client_2.subscribe({
 });
 
 //operation legenda: 0 - Ordine preso in carico; 1 - ingresso zona di carico; 2 - uscita zona di carico; 3 - ordine completato;
-Client_1.next({ operation: 0, id_order: 1});
-Client_1.next({ operation: 1, id_order: 1, id_alimento: 1});
+Client_1.next({client_id: 1, operation: 0, id_order: 1});
+Client_1.next({client_id: 1, operation: 1, id_order: 1, id_alimento: 1});
