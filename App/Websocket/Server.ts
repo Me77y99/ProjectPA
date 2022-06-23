@@ -1,7 +1,6 @@
 require('dotenv').config({path : './../../.env'})
-import { Observable } from 'rxjs';
 import {WebSocketServer} from 'ws';
-import { Food } from './model/Food';
+import { MessageFactory, MsgEnum } from './factory/factoryMessages';
 import { Order } from './model/Order';
 import { Recipe_foods } from './model/Recipe_foods';
 
@@ -10,6 +9,7 @@ let recived: any;
 let weight: number;
 let infoIngredients: Array<any> = [];
 let count: number = 0;
+let factory:MessageFactory  = new MessageFactory();
 
 async function getChargingInfo(){
     
@@ -52,49 +52,60 @@ async function checkSorting(){
             if(roundFood.food_id === recived.id_alimento){
               return true;
             } else { 
+              count=0; //in caso di fallimento dell'ordine riazzeriamo il count per le future richieste provenienti dal client in quanto non riavviando il server count viene mantenuto all'ultimo valore
               await Order.update({status : "FALLITO"}, {where : {id: recived.id_order}});
               return false;
             }
-} else {
-    return false;
-}
+      } else {
+              return false;
+             }
 }
 
 async function checkQuantity(){
   //Controlla che l'ultima quantità misurata dalla bilancia rientri nei limiti Min Max dello step dell'ordine
   //Viene chiamata nel momento in cui il Client_1 comunica l'uscita dalla zona di carico
   //In caso di peso non conforme cambia lo status dell'ordine in FALLITO e arresta il client
+  if(weight >= infoIngredients[count-1].generalMin && weight <= infoIngredients[count-1].generalMax) {
+    return true;
+  } else{
+    count=0;
+    await Order.update({status : "FALLITO"}, {where : {id: recived.id_order}});
+    return false;
+  } 
 }
 
 async function completeOrder(){
   //Cambia lo status dell'ordine in COMPLETATO nel momento in cui il Client_1 comunica di aver terminato tutte le operazioni di carico
-  await Order.update({status : "COMPLETATO"}, {where : {id: recived.id_order}});
+  count=0;
+  await Order.update({status : "COMPLETATO"}, {where : {id: recived.id_order}});  
 }
 
 
 wss.on('connection', function connection(ws: any , req:any) {
-  ws.send(JSON.stringify("Connessione Stabilita"));
+  factory.getMessageResponse(MsgEnum.connectionEstablished, ws);
   ws.on('message', async function message(data: any) {
     recived = JSON.parse(data);
   
-      switch(recived.operation){
-        case 0 :  (await getChargingInfo() === true) ? ws.send(JSON.stringify(`Ordine ${recived.id_order} preso in carico`)) : 
-                                             ws.send(JSON.stringify(`Ordine ${recived.id_order} è già stato preso in carico precedentemente`));
-                 break;
-        case 1 :  (await checkSorting() === true) ? ws.send(JSON.stringify(`Sei entrato nella zona dell'alimento con id: ${recived.id_alimento}`)) : 
-                                   ws.send(JSON.stringify(`Sei entrato nella zona di carico sbagliato ferma tutto, l'ordine è fallito`));
-                 break;
-        case 2 :  checkQuantity() ? ws.send(JSON.stringify(`Sei uscito nella zona dell'alimento con id: ${recived.id_alimento}`)) : 
-                                    ws.send(JSON.stringify(`Sei entrato nella zona di carico sbagliato ferma tutto, l'ordine è fallito`));
-                 break;  
-        case 3 :  completeOrder();
-                 break;
-        case 4 : weight = recived.weight;
-                 console.log(weight);
-                 break;
-      
-      
+    switch(recived.operation){
+      case 0 :  (await getChargingInfo() === true) ?  factory.getMessageResponse(MsgEnum.getChargingInfoOK, ws, recived, infoIngredients.length) :
+                                                      factory.getMessageResponse(MsgEnum.getChargingInfoFAIL, ws, recived);
+                break;
+
+      case 1 :  (await checkSorting() === true) ? factory.getMessageResponse(MsgEnum.checkSortingOK, ws, recived, infoIngredients.length) : 
+                                                  factory.getMessageResponse(MsgEnum.checkSortingFAIL, ws, recived);
+                break;
+
+      case 2 :  (await checkQuantity() === true) ? factory.getMessageResponse(MsgEnum.checkQuantityOK, ws, recived, infoIngredients.length) : 
+                                                   factory.getMessageResponse(MsgEnum.checkQuantityFAIL, ws, recived);
+                break;
+
+      case 3 :  await completeOrder();
+                factory.getMessageResponse(MsgEnum.completeOrder, ws, recived)
+                break;
+
+      case 4 :  weight = recived.weight;
+                factory.getMessageResponse(MsgEnum.communicateWeight, ws, recived)
+                break;      
     }      
-  
   });
 });

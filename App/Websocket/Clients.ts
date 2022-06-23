@@ -1,8 +1,6 @@
-import { Observable, merge, map , filter} from 'rxjs';
-import { WebSocketSubject, webSocket} from 'rxjs/webSocket';
+import {webSocket} from 'rxjs/webSocket';
 require('dotenv').config({path : './../../.env'});
 (global as any).WebSocket = require('ws');
-
 
 /*
 Ho preso in carico l'ordine X (order_id) => il server riceve l'id dell'ordine:
@@ -33,44 +31,70 @@ Ho finito di processare l'ordine
 
 const Client_1 = webSocket(`ws://localhost:${process.env.WS_PORT}`); //Operatore
 const Client_2 = webSocket(`ws://localhost:${process.env.WS_PORT}`); //Bilancia a bordo macchina
-
+let check1: any , check2: any;
+let weight : number = 0;
 
 Client_1.subscribe({
-  next: msg => console.log(`Client_1 - message received from server: ` + msg), // Called whenever there is a message from the server.
+  next: msg  =>{
+                check1 = JSON.parse(JSON.stringify(msg));
+                console.log(`Client_1 - message received from server: ` + check1.message);
+              }, // Called whenever there is a message from the server.
   error: err => console.log(err), // Called if at any point WebSocket API signals some kind of error.
   complete: () => console.log('complete') // Called when connection is closed (for whatever reason).
 });
 
-
-
 Client_2.subscribe({
-  next: msg => console.log(`Client_2 - message received from server: ` + msg), // Called whenever there is a message from the server.
+  next: msg =>{
+                check2 = JSON.parse(JSON.stringify(msg));
+                console.log(`Client_2 - message received from server: ` + check2.message)
+              }, // Called whenever there is a message from the server.
   error: err => console.log(err), // Called if at any point WebSocket API signals some kind of error.
   complete: () => console.log('complete') // Called when connection is closed (for whatever reason).
 });
 
 //operation legenda: 0 - Ordine preso in carico; 1 - ingresso zona di carico; 2 - uscita zona di carico; 3 - ordine completato; 4 - pesa dell'alimento
-async function communicateToServer(){
-  let weight : number = 0;
-  await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 0, id_order: 1}));}, 5000));
-
-  setInterval(() => {(Client_2.next({ operation: 4, weight: weight}));}, 1000);
-
-  await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 1, id_order: 1, id_alimento: 1}));}, 5000));
-  weight += 10;
-  await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 2, id_order: 1, id_alimento: 1}));}, 5000));
-
-  await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 1, id_order: 1, id_alimento: 2}));}, 5000));
-  weight += 10;
-  await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 2, id_order: 1, id_alimento: 2}));}, 5000));
-
-  await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 1, id_order: 1, id_alimento: 3}));}, 5000));
-  await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 2, id_order: 1, id_alimento: 3}));}, 5000));
-
-  await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 3, id_order: 1}));}, 5000));
-
+async function communicateToServerToGetChargingInfo(){
+  await new Promise( resolve => {setTimeout(() => {resolve(Client_1.next({ operation: 0, id_order: 1}));}, 5000); });
 }
 
-communicateToServer();
+async function communicateToServerToCheckSorting(){
+  let intervalID : any;
+  let ingredientsInRecipe : Array<number> = [6, 2];
 
-  //Client_2.next({ operation: 4,client_id: 2, weight: 12}); 
+  for( let i:number=0; i < check1.num_Ingredients && check1.status == 1; i++){
+    intervalID = setInterval(() => {(Client_2.next({ operation: 4, weight: weight}));}, 1000);
+    //ENTRA
+    await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 1, id_order: 1, id_alimento: ingredientsInRecipe[i]}));}, 5000));
+    await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckQuantity(intervalID, ingredientsInRecipe[i]));}, 5000));    
+  }
+  
+}
+
+async function communicateToServerToCheckQuantity(intervalID : any, ingredient: number){
+  if(check1.status == 1){
+    clearInterval(intervalID);
+    intervalID = setInterval(() => {(weight= (weight+Math.random()*6.5), Client_2.next({operation: 4, weight: weight}));}, 1000);
+    await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 2, id_order: 1, id_alimento: ingredient}));}, 5000));
+    //ESCE
+    clearInterval(intervalID);
+  }
+  else{
+    clearInterval(intervalID);
+  }
+}
+
+async function communicateToServerToCompletingOrder(){
+  if(check1.status == 1){
+    await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 3, id_order: 1}));}, 5000));
+  } else{
+    console.log("FINITO FALLITO")
+  }
+}
+
+async function main(){
+  await communicateToServerToGetChargingInfo();
+  await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckSorting());}, 3000));
+  await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCompletingOrder());}, 3000));
+}
+
+main();
