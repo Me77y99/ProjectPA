@@ -37,7 +37,7 @@ let weight : number = 0;
 Client_1.subscribe({
   next: msg  =>{
                 check1 = JSON.parse(JSON.stringify(msg));
-                console.log(`Client_1 - message received from server: ` + check1.message);
+                console.log(`Client_1 - message received from server: ` + check1.message );
               }, // Called whenever there is a message from the server.
   error: err => console.log(err), // Called if at any point WebSocket API signals some kind of error.
   complete: () => console.log('complete') // Called when connection is closed (for whatever reason).
@@ -54,47 +54,49 @@ Client_2.subscribe({
 
 //operation legenda: 0 - Ordine preso in carico; 1 - ingresso zona di carico; 2 - uscita zona di carico; 3 - ordine completato; 4 - pesa dell'alimento
 async function communicateToServerToGetChargingInfo(){
-  await new Promise( resolve => {setTimeout(() => {resolve(Client_1.next({ operation: 0, id_order: 1}));}, 5000); });
+  Client_1.next({ operation: 0, id_order: 1});
+  await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckSorting());}, 1000)); 
 }
 
 async function communicateToServerToCheckSorting(){
-  let intervalID : any;
-  let ingredientsInRecipe : Array<number> = [6, 2];
+    let intervalID : any;
+    let ingredientsInRecipe : Array<number> = [1, 3, 2];
 
-  for( let i:number=0; i < check1.num_Ingredients && check1.status == 1; i++){
+    for( let i:number=0; i < check1.num_Ingredients && check1.status == 1; i++){
     intervalID = setInterval(() => {(Client_2.next({ operation: 4, weight: weight}));}, 1000);
     //ENTRA
-    await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 1, id_order: 1, id_alimento: ingredientsInRecipe[i]}));}, 5000));
-    await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckQuantity(intervalID, ingredientsInRecipe[i]));}, 5000));    
+      await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 1, id_order: 1, id_alimento: ingredientsInRecipe[i]}));}, 3000));
+      clearInterval(intervalID);
+      await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckQuantity(intervalID, ingredientsInRecipe[i]));}, 1000)); //permette di attendere il cambio di check1.status in caso di fallimento dell'ordine causa sorting
   }
-  
+  communicateToServerToCompletingOrder();
 }
 
 async function communicateToServerToCheckQuantity(intervalID : any, ingredient: number){
   if(check1.status == 1){
-    clearInterval(intervalID);
-    intervalID = setInterval(() => {(weight= (weight+Math.random()*6.5), Client_2.next({operation: 4, weight: weight}));}, 1000);
-    await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 2, id_order: 1, id_alimento: ingredient}));}, 5000));
+   
+    intervalID = setInterval(() => {(weight= (weight+Math.random()), Client_2.next({operation: 4, weight: weight}));}, 1000);
+    await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 2, id_order: 1, id_alimento: ingredient}));}, 6000));
     //ESCE
+    
     clearInterval(intervalID);
+    await new Promise( resolve => setTimeout(() => {resolve({});}, 1000));
+    
   }
   else{
     clearInterval(intervalID);
+
   }
 }
 
 async function communicateToServerToCompletingOrder(){
   if(check1.status == 1){
-    await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 3, id_order: 1}));}, 5000));
+    Client_1.next({ operation: 3, id_order: 1});
   } else{
     console.log("FINITO FALLITO")
   }
 }
 
-async function main(){
-  await communicateToServerToGetChargingInfo();
-  await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckSorting());}, 3000));
-  await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCompletingOrder());}, 3000));
-}
 
-main();
+communicateToServerToGetChargingInfo();
+  
