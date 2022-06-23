@@ -53,30 +53,30 @@ Client_2.subscribe({
 });
 
 //operation legenda: 0 - Ordine preso in carico; 1 - ingresso zona di carico; 2 - uscita zona di carico; 3 - ordine completato; 4 - pesa dell'alimento
-async function communicateToServerToGetChargingInfo(){
-  Client_1.next({ operation: 0, id_order: 1});
-  await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckSorting());}, 1000)); 
+async function communicateToServerToGetChargingInfo(ingredients : Array<number>, id_order: number){
+  Client_1.next({ operation: 0, id_order: id_order});
+  await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckSorting(ingredients, id_order));}, 1000)); 
 }
 
-async function communicateToServerToCheckSorting(){
+async function communicateToServerToCheckSorting(ingredients : Array<number>, id_order: number){
     let intervalID : any;
-    let ingredientsInRecipe : Array<number> = [1, 3, 2];
+    let ingredientsInRecipe : Array<number> = ingredients;
 
     for( let i:number=0; i < check1.num_Ingredients && check1.status == 1; i++){
     intervalID = setInterval(() => {(Client_2.next({ operation: 4, weight: weight}));}, 1000);
     //ENTRA
-      await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 1, id_order: 1, id_alimento: ingredientsInRecipe[i]}));}, 3000));
+      await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 1, id_order: id_order, id_alimento: ingredientsInRecipe[i]}));}, 3000));
       clearInterval(intervalID);
-      await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckQuantity(intervalID, ingredientsInRecipe[i]));}, 1000)); //permette di attendere il cambio di check1.status in caso di fallimento dell'ordine causa sorting
+      await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckQuantity(intervalID, ingredientsInRecipe[i] , id_order));}, 1000)); //permette di attendere il cambio di check1.status in caso di fallimento dell'ordine causa sorting
   }
   communicateToServerToCompletingOrder();
 }
 
-async function communicateToServerToCheckQuantity(intervalID : any, ingredient: number){
+async function communicateToServerToCheckQuantity(intervalID : any, ingredient: number ,id_order :number){
   if(check1.status == 1){
    
     intervalID = setInterval(() => {(weight= (weight+Math.random()), Client_2.next({operation: 4, weight: weight}));}, 1000);
-    await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 2, id_order: 1, id_alimento: ingredient}));}, 6000));
+    await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 2, id_order: id_order, id_alimento: ingredient}));}, 6000));
     //ESCE
     
     clearInterval(intervalID);
@@ -92,11 +92,15 @@ async function communicateToServerToCheckQuantity(intervalID : any, ingredient: 
 async function communicateToServerToCompletingOrder(){
   if(check1.status == 1){
     Client_1.next({ operation: 3, id_order: 1});
+    weight = 0;
   } else{
-    console.log("FINITO FALLITO")
+    weight = 0;
   }
 }
 
 
-communicateToServerToGetChargingInfo();
+communicateToServerToGetChargingInfo([1,3,2] , 1).then(
+  () => communicateToServerToGetChargingInfo([1,2,3] ,14).then(
+        ()=>communicateToServerToGetChargingInfo([1,3,2] ,15)));
+
   
