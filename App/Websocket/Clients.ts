@@ -37,22 +37,22 @@ let weight : number = 0;
 Client_1.subscribe({
   next: msg  =>{
                 check1 = JSON.parse(JSON.stringify(msg));
-                console.log(`Client_1 - message received from server: ` + check1.message );
+                console.log(`\nOperatore: ` + check1.message );
               }, // Called whenever there is a message from the server.
   error: err => console.log(err), // Called if at any point WebSocket API signals some kind of error.
-  complete: () => console.log('complete') // Called when connection is closed (for whatever reason).
+  complete: () => console.log('Client_1 (Operatore) connessione terminata') // Called when connection is closed (for whatever reason).
 });
 
 Client_2.subscribe({
   next: msg =>{
                 check2 = JSON.parse(JSON.stringify(msg));
-                console.log(`Client_2 - message received from server: ` + check2.message)
+                console.log(`Bilancia: ` + check2.message)
               }, // Called whenever there is a message from the server.
   error: err => console.log(err), // Called if at any point WebSocket API signals some kind of error.
-  complete: () => console.log('complete') // Called when connection is closed (for whatever reason).
+  complete: () => console.log('Client_2 (Bilancia) connessione terminata') // Called when connection is closed (for whatever reason).
 });
 
-//operation legenda: 0 - Ordine preso in carico; 1 - ingresso zona di carico; 2 - uscita zona di carico; 3 - ordine completato; 4 - pesa dell'alimento
+//operation legenda: 0 - Ordine preso in carico; 1 - ingresso zona di carico; 2 - uscita zona di carico; 3 - pesa dell'alimento ; 4 - ordine completato ; 5 - ordine fallito
 async function communicateToServerToGetChargingInfo(ingredients : Array<number>, id_order: number){
   Client_1.next({ operation: 0, id_order: id_order});
   await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckSorting(ingredients, id_order));}, 1000)); 
@@ -63,19 +63,19 @@ async function communicateToServerToCheckSorting(ingredients : Array<number>, id
     let ingredientsInRecipe : Array<number> = ingredients;
 
     for( let i:number=0; i < check1.num_Ingredients && check1.status == 1; i++){
-    intervalID = setInterval(() => {(Client_2.next({ operation: 4, weight: weight}));}, 1000);
+    intervalID = setInterval(() => {(Client_2.next({ operation: 3, weight: weight}));}, 1000);
     //ENTRA
       await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 1, id_order: id_order, id_alimento: ingredientsInRecipe[i]}));}, 3000));
       clearInterval(intervalID);
       await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckQuantity(intervalID, ingredientsInRecipe[i] , id_order));}, 1000)); //permette di attendere il cambio di check1.status in caso di fallimento dell'ordine causa sorting
   }
-  communicateToServerToCompletingOrder();
+  await communicateToServerToCompletingOrder(id_order);
 }
 
 async function communicateToServerToCheckQuantity(intervalID : any, ingredient: number ,id_order :number){
   if(check1.status == 1){
    
-    intervalID = setInterval(() => {(weight= (weight+Math.random()), Client_2.next({operation: 4, weight: weight}));}, 1000);
+    intervalID = setInterval(() => {(weight= (weight+Math.random()), Client_2.next({operation: 3, weight: weight}));}, 1000);
     await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 2, id_order: id_order, id_alimento: ingredient}));}, 6000));
     //ESCE
     
@@ -89,18 +89,25 @@ async function communicateToServerToCheckQuantity(intervalID : any, ingredient: 
   }
 }
 
-async function communicateToServerToCompletingOrder(){
+async function communicateToServerToCompletingOrder(id_order :number){
   if(check1.status == 1){
-    Client_1.next({ operation: 3, id_order: 1});
-    weight = 0;
+    Client_1.next({ operation: 4, id_order: id_order});
+    weight = 0;  
   } else{
+    Client_1.next({ operation: 5, id_order: id_order});
     weight = 0;
   }
 }
 
+async function disconnection(){
+  Client_1.unsubscribe(); 
+  Client_2.unsubscribe();
+}
 
 communicateToServerToGetChargingInfo([1,3,2] , 1).then(
-  () => communicateToServerToGetChargingInfo([1,2,3] ,14).then(
-        ()=>communicateToServerToGetChargingInfo([1,3,2] ,15)));
+  async() => await communicateToServerToGetChargingInfo([1,2,3] ,14).then(
+        async()=> await communicateToServerToGetChargingInfo([1,3,2] ,15)).then( 
+          async() => await new Promise( resolve => setTimeout(() => {resolve(disconnection());}, 1000))
+        ));
 
   

@@ -11,7 +11,7 @@ export class connectionEstablished implements Message {
         this.status = 1;
     }
     getMsg():Object {
-        return {status: this.status, message: `Connessione Stabilita!`};
+        return {status: this.status, message: `Connessione Stabilita!\n`};
     }
 }
 
@@ -25,7 +25,7 @@ export class getChargingInfoOK implements Message {
         this.recived = recived;
     }
     getMsg():Object {
-        return {status: this.status, num_Ingredients: this.num_Ingredients, message: `Ordine ${this.recived.id_order} preso in carico!`};
+        return {status: this.status, num_Ingredients: this.num_Ingredients, message: `Ordine ${this.recived.id_order} preso in carico!\n`};
     }
 }
 
@@ -37,7 +37,7 @@ export class getChargingInfoFAIL implements Message {
         this.recived = recived;
     }
     getMsg():Object {
-        return {status: this.status, message: `Ordine ${this.recived.id_order} è già stato preso in carico precedentemente!`};
+        return {status: this.status, message: `Ordine ${this.recived.id_order} è già stato preso in carico precedentemente!\n`};
     }
 }
 
@@ -51,7 +51,7 @@ export class checkSortingOK implements Message {
         this.recived = recived;
     }
     getMsg():Object {
-        return {status: this.status, num_Ingredients: this.num_Ingredients, message: `Sei entrato nella zona dell'alimento con id: ${this.recived.id_alimento}!`};
+        return {status: this.status, num_Ingredients: this.num_Ingredients, message: `Sei entrato nella zona dell'alimento con id: ${this.recived.id_alimento}!\n`};
     }
 }
 
@@ -63,7 +63,7 @@ export class checkSortingFAIL implements Message {
         this.recived = recived;
     }
     public getMsg():Object {
-        return {status: this.status, message: `Sei entrato nella zona di carico sbagliato ferma tutto, l'ordine è fallito!`};
+        return {status: this.status, message: `Sei entrato nella zona di carico sbagliata!\n`};
     }
 }
 
@@ -77,7 +77,7 @@ export class checkQuantityOK implements Message {
         this.recived = recived;
     }
     public getMsg():Object {
-        return {status: this.status, num_Ingredients: this.num_Ingredients, message: `Sei uscito dalla zona di carico dell'alimento: ${this.recived.id_alimento}! La bilancia restituisce un peso conforme!`};
+        return {status: this.status, num_Ingredients: this.num_Ingredients, message: `Sei uscito dalla zona di carico dell'alimento: ${this.recived.id_alimento}! La bilancia restituisce un peso conforme!\n`};
     }
 }
 
@@ -89,7 +89,7 @@ export class checkQuantityFAIL implements Message {
         this.recived = recived;
     }
     public getMsg():Object {
-        return {status: this.status, message: `Sei uscito dalla zona di carico dell'alimento: ${this.recived.id_alimento}! La bilancia restituisce un peso non conforme! L'ordine è fallito!`};
+        return {status: this.status, message: `Sei uscito dalla zona di carico dell'alimento: ${this.recived.id_alimento}! La bilancia restituisce un peso non conforme!\n`};
     }
 }
 
@@ -99,17 +99,28 @@ export class communicateWeight implements Message {
         this.recived = recived;
     }
     public getMsg():Object {
-        return {message: `Hai caricato ${this.recived.weight} kg!`};
+        return {message: `Hai caricato ${this.recived.weight} kg! Timestamp: ${Date.now()}`};
     }
 }
 
-export class completeOrder implements Message {
-    status: number;
-    constructor(){
-        this.status = 1;
+export class completeOrderOK implements Message {
+   
+    recived: any;
+    constructor(recived: any){
+        this.recived = recived;
     }
     public getMsg():Object {
-        return {status: this.status, message: `Ordine Completato!`};
+        return {message: `ORDINE ${this.recived.id_order} COMPLETATO\n`};
+    }
+}
+
+export class completeOrderFAIL implements Message {
+    recived: any;
+    constructor(recived: any){
+        this.recived = recived;
+    }
+    public getMsg():Object {
+        return {message: `ORDINE ${this.recived.id_order} FALLITO\n`};
     }
 }
 
@@ -122,7 +133,8 @@ export enum MsgEnum {
     checkQuantityOK,
     checkQuantityFAIL,
     communicateWeight,
-    completeOrder
+    completeOrderOK,
+    completeOrderFAIL
 }
 
 export class MessageFactory {
@@ -157,8 +169,11 @@ export class MessageFactory {
             case MsgEnum.communicateWeight:
                 retval = new communicateWeight(recived);
                 break;
-            case MsgEnum.completeOrder:
-                retval = new completeOrder();
+            case MsgEnum.completeOrderOK:
+                retval = new completeOrderOK(recived);
+                break;
+            case MsgEnum.completeOrderFAIL:
+                retval = new completeOrderFAIL(recived);
                 break;
 
         }

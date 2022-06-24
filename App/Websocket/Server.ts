@@ -29,8 +29,13 @@ async function getChargingInfo(){
             generalMax = generalMax + quantityMax;
             return({food_id: food.food_id, sort: food.sort, generalMin: generalMin, generalMax: generalMax});
       })
-      console.log(infoIngredients);
-      
+      console.log(`\nOrdine ${order.id} \nDi seguito vengono riportati l'id degli alimenti all'interno della ricetta ordinata con id: ${order.recipe_id} corredati di quantità minima e massima da rispettare`);
+
+      for(let food of infoIngredients){
+        console.log(`id: ${food.food_id} , quantità minima: ${Math.round(food.generalMin*100) /100} Kg, quantità massima: ${Math.round(food.generalMax*100) /100} Kg `);
+        
+      }
+
       await Order.update({status : "IN ESECUZIONE"}, {where : {id: recived.id_order}});
       return true;
     } else{
@@ -81,7 +86,9 @@ async function completeOrder(){
 }
 
 
-wss.on('connection', function connection(ws: any , req:any) {
+
+
+wss.on('connection', function connection(ws: any) {
   factory.getMessageResponse(MsgEnum.connectionEstablished, ws);
   ws.on('message', async function message(data: any) {
     recived = JSON.parse(data);
@@ -99,13 +106,22 @@ wss.on('connection', function connection(ws: any , req:any) {
                                                    factory.getMessageResponse(MsgEnum.checkQuantityFAIL, ws, recived);
                 break;
 
-      case 3 :  await completeOrder();
-                factory.getMessageResponse(MsgEnum.completeOrder, ws, recived)
+      case 3 :  weight = recived.weight;
+                factory.getMessageResponse(MsgEnum.communicateWeight, ws, recived)
                 break;
 
-      case 4 :  weight = recived.weight;
-                factory.getMessageResponse(MsgEnum.communicateWeight, ws, recived)
-                break;      
+      case 4 :  await completeOrder();
+                factory.getMessageResponse(MsgEnum.completeOrderOK, ws, recived)
+                break;
+
+      case 5 :  factory.getMessageResponse(MsgEnum.completeOrderFAIL, ws, recived)
+                break;
+
+            
     }      
+  });
+  ws.on('close', function close() {
+    console.log("Client disconnesso");
+  
   });
 });

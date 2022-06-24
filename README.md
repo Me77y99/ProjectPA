@@ -1,4 +1,3 @@
-
 # ProjectPA2022
 
 L'applicazione consente di gestire il processo di alimentazione di animali 
@@ -9,6 +8,26 @@ alimento 2 q.tà Y kg,…). In sostanza il sistema deve dare la possibilità di 
 un “ordine” con una precisa “ricetta” che poi verrà messo in esecuzione da un operatore 
 che provvederà a prelevare nelle giuste quantità e nel giusto ordine i vari alimenti 
 per soddisfare la ricetta richiesta.
+
+
+## Configurazione e installazione
+Una volta copiato il progetto nel proprio ambiente si dovranno cambiare le variabili di ambiente del file `.env` permettendo così una configurazione personalizzata dell'applicazione
+Il Dockerfile lancerà il comando `npm install` per installare tutte le dipendenze contenute in `package.json` necessarie al funzionamento di `API` e  `Websocket`. Inoltre, verrà lanciato lo script `seed.sql`, il quale creerà e popolerà le seguenti tabelle: 
+
+  >  - users: contiene informazioni sugli utenti
+  >  - foods: contiene informazioni sugli alimenti
+  >  - orders: contiene informazioni sugli ordini di acquisto
+  >  - recipe: contiene informazioni sulle ricette
+  >  - recipe_foods: contiene informazioni per ogni coppia ricetta/alimento insieme a sort e rate
+
+Una volta lanciato il Dockerfile questo esporrà tutti i vari servizi su delle porte, come ad esempio: 
+
+    DB: 3306	
+    API: 3000
+    Websocket: 3001
+   
+## Architettura
+
 
 ## API Reference
 
@@ -110,6 +129,9 @@ Nel body della richiesta vanno specificati il nome dell'alimento di cui si vuole
     "quantity": "Inserire quantità da aggiungere o togliere (per togliere precedere il numero con -)"
 }
 ```
+
+## Websocket Reference
+Nella directory `App/Websocket` è incapsulato un back-end per la gestione di un flusso di dati che proviene da due websocket definite in `Clients.ts`. Queste si connettono ad un WebSocketServer (`Server.ts`) che può essere interrogato alla porta `WS_PORT` definita nel file `.env`. Tutti i messaggi che vengono scambiati tra i client e il server vengono generati da l'apposita `factoryMessages`.
 
 
 ## Authors

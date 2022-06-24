@@ -12,7 +12,8 @@ export class ConnectionDb {
         {
 			host: process.env.DB_HOST,
 			port: parseInt(process.env.DB_PORT),
-			dialect: 'mysql'
+			dialect: 'mysql',
+            logging: false
 		});
 	}
 
