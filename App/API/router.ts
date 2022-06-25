@@ -1,4 +1,4 @@
-require('dotenv').config({path : './../../.env'})
+require('dotenv').config({path : './../.env'})
 import * as Contr from "./controller/Controller";
 import * as Midd from "./middleware/midd_route"
 const express = require('express')

@@ -1,36 +1,16 @@
 import {webSocket} from 'rxjs/webSocket';
-require('dotenv').config({path : './../../.env'});
+require('dotenv').config({path : './../.env'});
 (global as any).WebSocket = require('ws');
 
-/*
-Ho preso in carico l'ordine X (order_id) => il server riceve l'id dell'ordine:
-1) cambia status da Creato a In Esecuzione all'ordine, 
-2) si tira fuori la ricetta con il sorting degli alimenti,
-3) si calcola rispetto alla quantità dell'ordine e ai rate degli alimenti nella ricetta le quantità di ciascun alimento +- 
-   l'errore percentuale in .env
+/*PER DOCKER
+const Client_1 = webSocket(`ws://WebsocketServer:${process.env.WS_PORT}`); //Operatore
+const Client_2 = webSocket(`ws://WebsocketServer:${process.env.WS_PORT}`); //Bilancia a bordo macchina */
 
-Alla fine il server ha un array di oggetti in cui ciascun elemento è ordinato rispetto al sort;
-e contiene l'id dell'alimento (per controllare che l'operatore esegua i carichi nel giusto ordine), 
-la quantità minima e la quantità massima che la bilancia deve avere dopo il carico dell'alimento 
-(per controllare di non sforare l'errore percentuale)
 
-Dopo 10 sec: Sono entrato in zona Alimento 1, sono le ore tot
-
-Dopo 10 sec: Sto uscendo da zona Alimento 1, sono le ore tot
-
-Dopo 10 sec: Sono entrato in zona Alimento 2, sono le ore tot
-
-Dopo 10 sec: Sto uscendo da zona Alimento 2, sono le ore tot
-
-Dopo 10 sec: Sono entrato in zona Alimento 3, sono le ore tot
-
-Dopo 10 sec: Sto uscendo da zona Alimento 3, sono le ore tot
-
-Ho finito di processare l'ordine
-*/
-
+//PER DEV 
 const Client_1 = webSocket(`ws://localhost:${process.env.WS_PORT}`); //Operatore
 const Client_2 = webSocket(`ws://localhost:${process.env.WS_PORT}`); //Bilancia a bordo macchina
+
 let check1: any , check2: any;
 let weight : number = 0;
 
@@ -53,12 +33,12 @@ Client_2.subscribe({
 });
 
 //operation legenda: 0 - Ordine preso in carico; 1 - ingresso zona di carico; 2 - uscita zona di carico; 3 - pesa dell'alimento ; 4 - ordine completato ; 5 - ordine fallito
-async function communicateToServerToGetChargingInfo(ingredients : Array<number>, id_order: number){
+async function communicateToServerToGetChargingInfo(ingredients : Array<number>, id_order: number , add_weight:number){
   Client_1.next({ operation: 0, id_order: id_order});
-  await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckSorting(ingredients, id_order));}, 1000)); 
+  await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckSorting(ingredients, id_order, add_weight));}, 1000)); 
 }
 
-async function communicateToServerToCheckSorting(ingredients : Array<number>, id_order: number){
+async function communicateToServerToCheckSorting(ingredients : Array<number>, id_order: number, add_weight:number){
     let intervalID : any;
     let ingredientsInRecipe : Array<number> = ingredients;
 
@@ -67,15 +47,15 @@ async function communicateToServerToCheckSorting(ingredients : Array<number>, id
     //ENTRA
       await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 1, id_order: id_order, id_alimento: ingredientsInRecipe[i]}));}, 3000));
       clearInterval(intervalID);
-      await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckQuantity(intervalID, ingredientsInRecipe[i] , id_order));}, 1000)); //permette di attendere il cambio di check1.status in caso di fallimento dell'ordine causa sorting
+      await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckQuantity(intervalID, ingredientsInRecipe[i] , id_order, add_weight));}, 1000)); //permette di attendere il cambio di check1.status in caso di fallimento dell'ordine causa sorting
   }
-  await communicateToServerToCompletingOrder(id_order);
+  await new Promise (resolve => resolve(communicateToServerToCompletingOrder(id_order)));
 }
 
-async function communicateToServerToCheckQuantity(intervalID : any, ingredient: number ,id_order :number){
+async function communicateToServerToCheckQuantity(intervalID : any, ingredient: number ,id_order :number , add_weight:number){
   if(check1.status == 1){
-   
-    intervalID = setInterval(() => {(weight= (weight+Math.random()), Client_2.next({operation: 3, weight: weight}));}, 1000);
+    
+    intervalID = setInterval(() => {(weight= (weight+add_weight), Client_2.next({operation: 3, weight: weight}));}, 1000);
     await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 2, id_order: id_order, id_alimento: ingredient}));}, 6000));
     //ESCE
     
@@ -91,7 +71,7 @@ async function communicateToServerToCheckQuantity(intervalID : any, ingredient: 
 
 async function communicateToServerToCompletingOrder(id_order :number){
   if(check1.status == 1){
-    Client_1.next({ operation: 4, id_order: id_order});
+      Client_1.next({ operation: 4, id_order: id_order});
     weight = 0;  
   } else{
     Client_1.next({ operation: 5, id_order: id_order});
@@ -104,9 +84,15 @@ async function disconnection(){
   Client_2.unsubscribe();
 }
 
-communicateToServerToGetChargingInfo([1,3,2] , 1).then(
-  async() => await communicateToServerToGetChargingInfo([1,2,3] ,14).then(
-        async()=> await communicateToServerToGetChargingInfo([1,3,2] ,15)).then( 
+/* 
+  L'esecuzione delle seguenti righe permette di simulare il processo di gestione di 3 ordini
+  consequenziali, permettendoci di effettuare una simulazione del comportamento del server 
+  rispetto ai dati inviatigli dal client.
+  (la prima riga simula un ordine fallito )
+*/
+communicateToServerToGetChargingInfo([4,2,5] , 3, 4).then( //sort sbagliato, ORDINE FALLITO 
+  async() => await communicateToServerToGetChargingInfo([2,5] , 4 , 17).then( //sort giusto ma quantità sbagliate, ORDINE FALLITO 
+        async()=> await communicateToServerToGetChargingInfo([2,5,3,4,1] ,2 , 4)).then( //sort giusto e quantità giuste, ORDINE COMPLETATO 
           async() => await new Promise( resolve => setTimeout(() => {resolve(disconnection());}, 1000))
         ));
 

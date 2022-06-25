@@ -1,21 +1,6 @@
--- phpMyAdmin SQL Dump
--- version 5.0.4
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Creato il: Giu 16, 2022 alle 13:01
--- Versione del server: 10.4.17-MariaDB
--- Versione PHP: 7.2.34
-
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `project_pa`
@@ -38,12 +23,12 @@ CREATE TABLE `foods` (
 --
 
 INSERT INTO `foods` (`Id`, `Name`, `Quantity`) VALUES
-(1, 'Soja ', '20.00'),
-(2, 'Crusca ', '15.00'),
-(3, 'Barbabietola', '50.00'),
-(4, 'Mais', '100.00'),
-(5, 'Orzo ', '10.00'),
-(6, 'Fave', '35.00');
+(1, 'Soja ', '120.00'),
+(2, 'Crusca ', '115.00'),
+(3, 'Barbabietola', '150.00'),
+(4, 'Mais', '200.00'),
+(5, 'Orzo ', '110.00'),
+(6, 'Fave', '180.00');
 
 -- --------------------------------------------------------
 
@@ -64,7 +49,11 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`Id`, `Recipe_id`, `User_id`, `Quantity`, `Status`) VALUES
-(1, 1, 2, '400.00', 'CREATO');
+(1, 3, 2, '20.00', 'CREATO'),
+(2, 5, 2, '100.00', 'CREATO'),
+(3, 2, 2, '50.00', 'CREATO'),
+(4, 4, 2, '125.00', 'CREATO'),
+(5, 1, 2, '180.00', 'CREATO');
 
 -- --------------------------------------------------------
 
@@ -82,8 +71,11 @@ CREATE TABLE `recipes` (
 --
 
 INSERT INTO `recipes` (`Id`, `Name`) VALUES
-(1, 'Mangime bovini'),
-(2, 'Becchime');
+(1, 'Mangime Bovini'),
+(2, 'Becchime'),
+(3, 'Mangime Ovini'),
+(4, 'Mangime Equini'),
+(5, 'Mangime Suini');
 
 -- --------------------------------------------------------
 
@@ -103,11 +95,21 @@ CREATE TABLE `recipe_foods` (
 --
 
 INSERT INTO `recipe_foods` (`Recipe_id`, `Food_id`, `Sort`, `Rate`) VALUES
-(1, 1, 1, 20),
-(1, 3, 2, 30),
-(1, 2, 3, 50),
-(2, 4, 1, 60),
-(2, 5, 2, 40);
+(1, 3, 1, 30),
+(1, 1, 2, 60),
+(1, 2, 3, 10),
+(2, 4, 1, 40),
+(2, 5, 2, 45),
+(2, 2, 3, 15),
+(3, 6, 1, 60),
+(3, 2, 2, 40),
+(4, 2, 1, 50),
+(4, 5, 2, 50),
+(5, 2, 1, 20),
+(5, 5, 2, 20),
+(5, 3, 3, 20),
+(5, 4, 4, 20),
+(5, 1, 5, 20);
 
 -- --------------------------------------------------------
 
@@ -180,13 +182,13 @@ ALTER TABLE `foods`
 -- AUTO_INCREMENT per la tabella `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT per la tabella `recipes`
 --
 ALTER TABLE `recipes`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT per la tabella `users`
