@@ -53,5 +53,5 @@ services:
       - ERROR_PERCENTAGE= "${ERROR_PERCENTAGE}"
     depends_on:
       - dbmysql
-      - websocketServer
+      - websocketserver
           
