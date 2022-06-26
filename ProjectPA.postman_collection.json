@@ -1,0 +1,246 @@
+{
+	"info": {
+		"_postman_id": "f78b896d-afdb-4e6b-a03e-300ef15be4da",
+		"name": "ProjectPA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Richiesta Ordine",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTUzNzExMzUsImV4cCI6MTY4NjkwNzEzNiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwL2NyZWF0ZS1vcmRlciIsInN1YiI6IjIiLCJyb2xlIjoidXNlciIsImlkIjoiMiJ9.2LnnP5MajBJlVQ6iuP3Bmzrxbs-mQnko3yH1u4LM5aw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "1",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"recipe_name\": \"Mangime Bovini\",\r\n    \"quantity\": \"20\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/create-order",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"create-order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Richiesta Nuova Ricetta",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTU0NTI3MDgsImV4cCI6MTY4Njk4ODcwOSwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwL2NyZWF0ZS1yZWNpcGUiLCJzdWIiOiIxIiwiaWQiOiIxIiwicm9sZSI6ImFkbWluIn0.1T_k18SOhtrVe5F_eQXN_s6TlzxvzhKbeE8gThv77SU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Mangime Suini\",\r\n    \"foods\": [\r\n        {\r\n            \"name\": \"Crusca\",\r\n            \"rate\": \"20\"\r\n        },\r\n        {\r\n            \"name\": \"Orzo\",\r\n            \"rate\": \"20\"\r\n        },\r\n        {\r\n            \"name\": \"Barbabietola\",\r\n            \"rate\": \"20\"\r\n        },\r\n        {\r\n            \"name\": \"Mais\",\r\n            \"rate\": \"20\"\r\n        },\r\n        {\r\n            \"name\": \"Soja\",\r\n            \"rate\": \"20\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/create-recipe",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"create-recipe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Aggiornamento Quantità Magazzino",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTUzNzExMzUsImV4cCI6MTY4NjkwNzEzNiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwL2NyZWF0ZS1vcmRlciIsInN1YiI6IjIiLCJyb2xlIjoidXNlciIsImlkIjoiMiJ9.2LnnP5MajBJlVQ6iuP3Bmzrxbs-mQnko3yH1u4LM5aw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Fave\",\r\n    \"quantity\": \"-15\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/update-storage",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"update-storage"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Richiesta Status Ordine",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTUzNzExMzUsImV4cCI6MTY4NjkwNzEzNiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwL2NyZWF0ZS1vcmRlciIsInN1YiI6IjIiLCJyb2xlIjoidXNlciIsImlkIjoiMiJ9.2LnnP5MajBJlVQ6iuP3Bmzrxbs-mQnko3yH1u4LM5aw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"order_id\": \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/order-state",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"order-state"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Visualizza disponibilità (uno o più proddotti)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTUzNzExMzUsImV4cCI6MTY4NjkwNzEzNiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwL2NyZWF0ZS1vcmRlciIsInN1YiI6IjIiLCJyb2xlIjoidXNlciIsImlkIjoiMiJ9.2LnnP5MajBJlVQ6iuP3Bmzrxbs-mQnko3yH1u4LM5aw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"foods\": [\r\n        {\"name\" : \"Soja\"},\r\n        {\"name\" : \"Crusca\"}\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/check-availability",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"check-availability"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Visualizza disponibilità (tutti i prodotti)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTUzNzExMzUsImV4cCI6MTY4NjkwNzEzNiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwL2NyZWF0ZS1vcmRlciIsInN1YiI6IjIiLCJyb2xlIjoidXNlciIsImlkIjoiMiJ9.2LnnP5MajBJlVQ6iuP3Bmzrxbs-mQnko3yH1u4LM5aw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/check-availability-all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"check-availability-all"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
