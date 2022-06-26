@@ -1,8 +1,8 @@
 FROM node:lts-stretch-slim
-WORKDIR /usr/src/WebsocketServer
+WORKDIR /usr/src/Server
 COPY . .
 RUN npm install
-RUN tsc 
+RUN npm run tsc
 CMD ["node", "Server.js"]
 
    

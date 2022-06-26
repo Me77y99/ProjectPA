@@ -1,0 +1,57 @@
+version: '3.4'
+
+services:
+  dbmysql:
+    image: mysql
+    restart: always
+    volumes: 
+          # prende lo script seed.sql per creare e popolare le tabelle
+          - ./seed.sql:/docker-entrypoint-initdb.d/seed.sql
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD= "${MYSQL_ROOT_PASSWORD}"
+  
+  api:
+    build: ./API
+    ports:
+      - 3000:3000
+    environment:
+      - DB_HOST= "${DB_HOST}"
+      - DB_USER= "${DB_USER}"
+      - DB_PASSWORD= "${DB_PASSWORD}"
+      - DB_NAME= "${DB_NAME}"
+      - DB_PORT= "${DB_PORT}"
+      - SECRET_KEY= "${SECRET_KEY}"
+    depends_on:
+          - dbmysql
+
+  websocketServer:
+    build: ./Server
+    ports:
+      - 3001:3001
+    environment:
+      - DB_HOST= "${DB_HOST}"
+      - DB_USER= "${DB_USER}"
+      - DB_PASSWORD= "${DB_PASSWORD}"
+      - DB_NAME= "${DB_NAME}"
+      - DB_PORT= "${DB_PORT}"
+      - WS_PORT= "${WS_PORT}"
+      - ERROR_PERCENTAGE= "${ERROR_PERCENTAGE}"
+    depends_on:
+          - dbmysql
+
+  websocketClient:
+    build: ./Client
+    environment:
+      - DB_HOST= "${DB_HOST}"
+      - DB_USER= "${DB_USER}"
+      - DB_PASSWORD= "${DB_PASSWORD}"
+      - DB_NAME= "${DB_NAME}"
+      - DB_PORT= "${DB_PORT}"
+      - WS_PORT= "${WS_PORT}"
+      - ERROR_PERCENTAGE= "${ERROR_PERCENTAGE}"
+    depends_on:
+      - dbmysql
+      - websocketServer
+          
