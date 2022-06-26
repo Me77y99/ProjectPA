@@ -1,6 +1,6 @@
 import { ErrorFactory , ErrEnum } from "../factory/factoryError";
 const jwt = require('jsonwebtoken');
-require('dotenv').config({path : './../../../.env'})
+require('dotenv').config({path : './../../.env'})
 
 let factory:ErrorFactory  = new ErrorFactory();
 

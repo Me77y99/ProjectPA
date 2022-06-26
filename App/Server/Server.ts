@@ -1,4 +1,4 @@
-require('dotenv').config({path : './../../.env'})
+require('dotenv').config({path : './../.env'})
 import {WebSocketServer} from 'ws';
 import { MessageFactory, MsgEnum } from './factory/factoryMessages';
 import { Order } from './model/Order';
