@@ -4,7 +4,12 @@ import { MessageFactory, MsgEnum } from './factory/factoryMessages';
 import { Order } from './model/Order';
 import { Recipe_foods } from './model/Recipe_foods';
 
-const wss = new WebSocketServer({port: process.env.WS_PORT});
+//PER DOCKER
+const wss = new WebSocketServer(`ws://WebsocketServer:${process.env.WS_PORT}`);
+
+//PER DEV
+//const wss = new WebSocketServer({port: process.env.WS_PORT});
+
 let recived: any;
 let weight: number;
 let infoIngredients: Array<any> = [];

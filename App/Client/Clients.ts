@@ -1,38 +1,52 @@
 import {webSocket} from 'rxjs/webSocket';
-require('dotenv').config({path : './../.env'});
+require('dotenv').config({path : './../../.env'});
 (global as any).WebSocket = require('ws');
 
-/*PER DOCKER
+
+//PER DOCKER
 const Client_1 = webSocket(`ws://WebsocketServer:${process.env.WS_PORT}`); //Operatore
-const Client_2 = webSocket(`ws://WebsocketServer:${process.env.WS_PORT}`); //Bilancia a bordo macchina */
+const Client_2 = webSocket(`ws://WebsocketServer:${process.env.WS_PORT}`); //Bilancia a bordo macchina 
 
-
+/*
 //PER DEV 
 const Client_1 = webSocket(`ws://localhost:${process.env.WS_PORT}`); //Operatore
 const Client_2 = webSocket(`ws://localhost:${process.env.WS_PORT}`); //Bilancia a bordo macchina
+*/
 
 let check1: any , check2: any;
 let weight : number = 0;
 
+
+/*
+I seguenti blocchi Client1.subscribe e Client2.subscribe, permettono ai due client di instaurare un canale
+di comunicazione con il server in funzione (nel caso di sviluppo in locale sulla porta in env.WS_PORT; nel caso di
+docker nel container chiamato WebsocketServer)
+*/
 Client_1.subscribe({
+  // Next viene chiamato ogni volta che il client riceve un messaggio dal Server.
   next: msg  =>{
                 check1 = JSON.parse(JSON.stringify(msg));
                 console.log(`\nOperatore: ` + check1.message );
-              }, // Called whenever there is a message from the server.
-  error: err => console.log(err), // Called if at any point WebSocket API signals some kind of error.
-  complete: () => console.log('Client_1 (Operatore) connessione terminata') // Called when connection is closed (for whatever reason).
+              }, 
+  // Error viene chiamato se in un qualsiasi momento l'API Websocket riscontra un qualche errore.
+  error: err => console.log(err), 
+  //Complete viene chimato al momento della chiusura del canale di comunicazione con il server (per qualsiasi ragione)
+  complete: () => console.log('Client_1 (Operatore) connessione terminata')
 });
 
 Client_2.subscribe({
   next: msg =>{
                 check2 = JSON.parse(JSON.stringify(msg));
                 console.log(`Bilancia: ` + check2.message)
-              }, // Called whenever there is a message from the server.
-  error: err => console.log(err), // Called if at any point WebSocket API signals some kind of error.
-  complete: () => console.log('Client_2 (Bilancia) connessione terminata') // Called when connection is closed (for whatever reason).
+              },
+  error: err => console.log(err),
+  complete: () => console.log('Client_2 (Bilancia) connessione terminata')
 });
 
 //operation legenda: 0 - Ordine preso in carico; 1 - ingresso zona di carico; 2 - uscita zona di carico; 3 - pesa dell'alimento ; 4 - ordine completato ; 5 - ordine fallito
+/*
+
+*/
 async function communicateToServerToGetChargingInfo(ingredients : Array<number>, id_order: number , add_weight:number){
   Client_1.next({ operation: 0, id_order: id_order});
   await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckSorting(ingredients, id_order, add_weight));}, 1000)); 
@@ -91,9 +105,11 @@ async function disconnection(){
   (la prima riga simula un ordine fallito )
 */
 communicateToServerToGetChargingInfo([4,2,5] , 3, 4).then( //sort sbagliato, ORDINE FALLITO 
-  async() => await communicateToServerToGetChargingInfo([2,5] , 4 , 17).then( //sort giusto ma quantità sbagliate, ORDINE FALLITO 
-        async()=> await communicateToServerToGetChargingInfo([2,5,3,4,1] ,2 , 4)).then( //sort giusto e quantità giuste, ORDINE COMPLETATO 
+  async()=> await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToGetChargingInfo([2,5,3,4,1] ,2 , 4));}, 1000)).then( //sort giusto e quantità giuste, ORDINE COMPLETATO   
+      async() => await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToGetChargingInfo([2,5] , 4 , 17));}, 1000)).then( //sort giusto ma quantità sbagliate, ORDINE FALLITO 
           async() => await new Promise( resolve => setTimeout(() => {resolve(disconnection());}, 1000))
-        ));
+      )
+  )
+);
 
   
