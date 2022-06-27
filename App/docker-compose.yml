@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.9'
 
 services:
   dbmysql:
@@ -10,7 +10,7 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_ROOT_PASSWORD= ""
+      - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=project_pa
       - MYSQL_USER=user 
       - MYSQL_PASSWORD=password
@@ -20,12 +20,12 @@ services:
     ports:
       - 3000:3000
     environment:
-      - DB_HOST=localhost
-      - DB_USER=root
-      - DB_PASSWORD= 
-      - DB_NAME=project_pa
-      - DB_PORT=3306
-      - SECRET_KEY=qwertyuiopasdfghjklzxcvbnm123456
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=project_pa
+      - MYSQL_PORT=3306
+      - MYSQL_HOST=dbmysql
+      - MYSQL_USER=user 
+      - MYSQL_PASSWORD=password
     env_file:
       - .env
     depends_on:
@@ -33,33 +33,39 @@ services:
 
   websocketserver:
     build: ./Server
+    restart: on-failure
     ports:
       - 3001:3001
     environment:
       - DB_HOST=localhost
-      - DB_USER=root
-      - DB_PASSWORD= 
+      - DB_USER=user
+      - DB_PASSWORD=password
       - DB_NAME=project_pa
       - DB_PORT=3306
       - WS_PORT=3001
       - ERROR_PERCENTAGE=15
+      - MYSQL_USER=user 
+      - MYSQL_PASSWORD=password
     env_file:
       - .env
-    depends_on:
+    depends_on: 
       - dbmysql
+      - api
 
   websocketclient:
     build: ./Client
+    restart: on-failure
     environment:
       - DB_HOST=localhost
-      - DB_USER=root
-      - DB_PASSWORD= 
+      - DB_USER=user
+      - DB_PASSWORD=password
       - DB_NAME=project_pa
       - DB_PORT=3306
       - WS_PORT=3001
       - ERROR_PERCENTAGE=15
+      - MYSQL_USER=user 
+      - MYSQL_PASSWORD=password
     env_file:
-      - .env
-    depends_on:
-      - websocketserver
+      - .env 
+
           

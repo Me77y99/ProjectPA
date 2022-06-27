@@ -3,7 +3,7 @@ import { DataTypes, Sequelize } from 'sequelize';
 
 const sequelize: Sequelize = ConnectionDb.getInstanceConnection();
 
-export const Recipe_foods = sequelize.define('Recipe_foods', {
+export const Recipe_foods = sequelize.define('recipe_foods', {
     recipe_id: {
         type: DataTypes.INTEGER(),
         allowNull: false
@@ -22,7 +22,7 @@ export const Recipe_foods = sequelize.define('Recipe_foods', {
     }
 }, 
 {
-    modelName: 'Recipe_foods',
+    modelName: 'recipe_foods',
     timestamps: false
 });
 

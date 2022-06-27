@@ -3,7 +3,7 @@ import { DataTypes, Sequelize } from 'sequelize';
 
 const sequelize: Sequelize = ConnectionDb.getInstanceConnection();
 
-export const Order = sequelize.define('Order', {
+export const Order = sequelize.define('order', {
     id: {
         type: DataTypes.INTEGER(),
         primaryKey: true,
@@ -27,6 +27,6 @@ export const Order = sequelize.define('Order', {
     }
 }, 
 {
-    modelName: 'Order',
+    modelName: 'order',
     timestamps: false
 });

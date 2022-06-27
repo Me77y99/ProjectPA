@@ -1,5 +1,5 @@
 import {webSocket} from 'rxjs/webSocket';
-//require('dotenv').config({path : './../.env'});
+require('dotenv').config({path : './../.env'});
 (global as any).WebSocket = require('ws');
 
 

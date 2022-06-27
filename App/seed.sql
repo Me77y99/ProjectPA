@@ -12,7 +12,7 @@ SET time_zone = "+00:00";
 -- Struttura della tabella `foods`
 --
 
-CREATE TABLE `foods` (
+CREATE TABLE `Foods` (
   `Id` int(10) NOT NULL,
   `Name` varchar(50) NOT NULL,
   `Quantity` decimal(10,2) NOT NULL DEFAULT 0.00
@@ -22,7 +22,7 @@ CREATE TABLE `foods` (
 -- Dump dei dati per la tabella `foods`
 --
 
-INSERT INTO `foods` (`Id`, `Name`, `Quantity`) VALUES
+INSERT INTO `Foods` (`Id`, `Name`, `Quantity`) VALUES
 (1, 'Soja ', '120.00'),
 (2, 'Crusca ', '115.00'),
 (3, 'Barbabietola', '150.00'),
@@ -36,7 +36,7 @@ INSERT INTO `foods` (`Id`, `Name`, `Quantity`) VALUES
 -- Struttura della tabella `orders`
 --
 
-CREATE TABLE `orders` (
+CREATE TABLE `Orders` (
   `Id` int(10) NOT NULL,
   `Recipe_id` int(10) NOT NULL,
   `User_id` int(10) NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE `orders` (
 -- Dump dei dati per la tabella `orders`
 --
 
-INSERT INTO `orders` (`Id`, `Recipe_id`, `User_id`, `Quantity`, `Status`) VALUES
+INSERT INTO `Orders` (`Id`, `Recipe_id`, `User_id`, `Quantity`, `Status`) VALUES
 (1, 3, 2, '20.00', 'CREATO'),
 (2, 5, 2, '100.00', 'CREATO'),
 (3, 2, 2, '50.00', 'CREATO'),
@@ -61,7 +61,7 @@ INSERT INTO `orders` (`Id`, `Recipe_id`, `User_id`, `Quantity`, `Status`) VALUES
 -- Struttura della tabella `recipes`
 --
 
-CREATE TABLE `recipes` (
+CREATE TABLE `Recipes` (
   `Id` int(11) NOT NULL,
   `Name` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -70,7 +70,7 @@ CREATE TABLE `recipes` (
 -- Dump dei dati per la tabella `recipes`
 --
 
-INSERT INTO `recipes` (`Id`, `Name`) VALUES
+INSERT INTO `Recipes` (`Id`, `Name`) VALUES
 (1, 'Mangime Bovini'),
 (2, 'Becchime'),
 (3, 'Mangime Ovini'),
@@ -83,7 +83,7 @@ INSERT INTO `recipes` (`Id`, `Name`) VALUES
 -- Struttura della tabella `recipe_foods`
 --
 
-CREATE TABLE `recipe_foods` (
+CREATE TABLE `Recipe_foods` (
   `Recipe_id` int(10) NOT NULL,
   `Food_id` int(10) NOT NULL,
   `Sort` int(10) NOT NULL,
@@ -94,7 +94,7 @@ CREATE TABLE `recipe_foods` (
 -- Dump dei dati per la tabella `recipe_foods`
 --
 
-INSERT INTO `recipe_foods` (`Recipe_id`, `Food_id`, `Sort`, `Rate`) VALUES
+INSERT INTO `Recipe_foods` (`Recipe_id`, `Food_id`, `Sort`, `Rate`) VALUES
 (1, 3, 1, 30),
 (1, 1, 2, 60),
 (1, 2, 3, 10),
@@ -117,7 +117,7 @@ INSERT INTO `recipe_foods` (`Recipe_id`, `Food_id`, `Sort`, `Rate`) VALUES
 -- Struttura della tabella `users`
 --
 
-CREATE TABLE `users` (
+CREATE TABLE `Users` (
   `Id` int(10) NOT NULL,
   `Role` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -126,7 +126,7 @@ CREATE TABLE `users` (
 -- Dump dei dati per la tabella `users`
 --
 
-INSERT INTO `users` (`Id`, `Role`) VALUES
+INSERT INTO `Users` (`Id`, `Role`) VALUES
 (1, 'admin'),
 (2, 'user'),
 (3, 'user');
@@ -138,13 +138,13 @@ INSERT INTO `users` (`Id`, `Role`) VALUES
 --
 -- Indici per le tabelle `foods`
 --
-ALTER TABLE `foods`
+ALTER TABLE `Foods`
   ADD PRIMARY KEY (`Id`);
 
 --
 -- Indici per le tabelle `orders`
 --
-ALTER TABLE `orders`
+ALTER TABLE `Orders`
   ADD PRIMARY KEY (`Id`),
   ADD KEY `ForeignKeyRecipe` (`Recipe_id`),
   ADD KEY `ForeignKeyUser` (`User_id`);
@@ -152,20 +152,20 @@ ALTER TABLE `orders`
 --
 -- Indici per le tabelle `recipes`
 --
-ALTER TABLE `recipes`
+ALTER TABLE `Recipes`
   ADD PRIMARY KEY (`Id`);
 
 --
 -- Indici per le tabelle `recipe_foods`
 --
-ALTER TABLE `recipe_foods`
+ALTER TABLE `Recipe_foods`
   ADD KEY `ForeignKeyFood` (`Food_id`),
   ADD KEY `ForeignKeyRecipeId` (`Recipe_id`);
 
 --
 -- Indici per le tabelle `users`
 --
-ALTER TABLE `users`
+ALTER TABLE `Users`
   ADD PRIMARY KEY (`Id`);
 
 --
@@ -175,25 +175,25 @@ ALTER TABLE `users`
 --
 -- AUTO_INCREMENT per la tabella `foods`
 --
-ALTER TABLE `foods`
+ALTER TABLE `Foods`
   MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT per la tabella `orders`
 --
-ALTER TABLE `orders`
+ALTER TABLE `Orders`
   MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT per la tabella `recipes`
 --
-ALTER TABLE `recipes`
+ALTER TABLE `Recipes`
   MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT per la tabella `users`
 --
-ALTER TABLE `users`
+ALTER TABLE `Users`
   MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
@@ -203,16 +203,16 @@ ALTER TABLE `users`
 --
 -- Limiti per la tabella `orders`
 --
-ALTER TABLE `orders`
-  ADD CONSTRAINT `ForeignKeyRecipe` FOREIGN KEY (`Recipe_id`) REFERENCES `recipes` (`Id`),
-  ADD CONSTRAINT `ForeignKeyUser` FOREIGN KEY (`User_id`) REFERENCES `users` (`Id`);
+ALTER TABLE `Orders`
+  ADD CONSTRAINT `ForeignKeyRecipe` FOREIGN KEY (`Recipe_id`) REFERENCES `Recipes` (`Id`),
+  ADD CONSTRAINT `ForeignKeyUser` FOREIGN KEY (`User_id`) REFERENCES `Users` (`Id`);
 
 --
 -- Limiti per la tabella `recipe_foods`
 --
-ALTER TABLE `recipe_foods`
-  ADD CONSTRAINT `ForeignKeyFood` FOREIGN KEY (`Food_id`) REFERENCES `foods` (`Id`),
-  ADD CONSTRAINT `ForeignKeyRecipeId` FOREIGN KEY (`Recipe_id`) REFERENCES `recipes` (`Id`);
+ALTER TABLE `Recipe_foods`
+  ADD CONSTRAINT `ForeignKeyFood` FOREIGN KEY (`Food_id`) REFERENCES `Foods` (`Id`),
+  ADD CONSTRAINT `ForeignKeyRecipeId` FOREIGN KEY (`Recipe_id`) REFERENCES `Recipes` (`Id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
