@@ -1,37 +1,11 @@
+/*
+Factory per le risposte di errore nelle API. 
+Preliminarmente è stata definita l'interfaccia Error da cui tutti i tipi di risposte ereditano.
+Ogni classe effettuerà l'override dei suoi attribuiti e metodi.
+*/
 export interface  Error {
     error_code:number;
     getMsg():string;
-}
-
-export class GenericError implements Error {
-    error_code: number;
-    constructor(){this.error_code = 400;}
-    getMsg():string {
-        return "this is a generic error";
-    }
-}
-export class Forbidden implements Error {
-    error_code: number;
-    constructor(){this.error_code = 400;}
-    public getMsg():string {
-        return "no rights...";
-    }
-}
-
-export class BadRequest implements Error {
-    error_code: number;
-    constructor(){this.error_code = 400;}
-    public getMsg():string {
-        return "bad bad...fix and retry...";
-    }
-}
-
-export class Unauthorized implements Error {
-    error_code: number;
-    constructor(){this.error_code = 400;}
-    public getMsg():string {
-        return "Richiesta non autorizzata";
-    }
 }
 
 export class HeaderAuthEmpty implements Error {
@@ -44,7 +18,7 @@ export class HeaderAuthEmpty implements Error {
 
 export class BadHeaderContentType implements Error {
     error_code: number;
-    constructor(){this.error_code = 401;}
+    constructor(){this.error_code = 415;}
     public getMsg():string {
         return "Il content-type della richiesta non è corretto";
     }
@@ -68,15 +42,19 @@ export class BadTokenJWT implements Error {
 
 export enum ErrEnum {
     None,
-    Generic,
-    Forbidden,
-    BadRequest,
-    Unauthorized,
     HeaderAuthEmpty,
     BadHeaderContentType,
     UndefinedToken,
     BadTokenJWT
 }
+
+/* 
+Definizione della classe che ci permetterà di istanziare la factory esternamente.
+Il metodo getError() in base al tipo di errore ritorna l'istanza della classe specifica.
+Il metodo getErrorResponse() ritorna la risposta che verrà lanciata al client delle API dove
+in status verrà inoltrato l'attributo error_code specifico; mentre nella send andrà il messaggio
+estrapolato tramite il getMsg()
+*/
 
 export class ErrorFactory {
     getErrorResponse(error_type: ErrEnum , res: any) {
@@ -87,18 +65,6 @@ export class ErrorFactory {
     getError (type:ErrEnum):Error{
         let retval:Error = null;
         switch (type){
-            case ErrEnum.Generic:
-                retval = new GenericError();
-                break;
-            case ErrEnum.Forbidden:
-                retval = new Forbidden();
-                break;
-            case ErrEnum.BadRequest:
-                retval = new BadRequest();
-                break;
-            case ErrEnum.Unauthorized :
-                retval = new Unauthorized();
-                break;
             case ErrEnum.HeaderAuthEmpty :
                 retval = new HeaderAuthEmpty();
                 break;    

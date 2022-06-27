@@ -1,6 +1,12 @@
 import { ConnectionDb } from '../connectionAPI';
 import { DataTypes, Sequelize } from 'sequelize';
 
+/*
+Per interagire con l'ORM Sequelize inizialmente è stata messa l'istanza della 
+connessione nella variabile sequelize. 
+Di seguito è stato definito il modello per la tabella Order specificando gli attributi 
+con le relative caratteristiche.
+*/
 const sequelize: Sequelize = ConnectionDb.getInstanceConnection();
 
 export const Order = sequelize.define('order', {

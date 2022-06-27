@@ -1,6 +1,12 @@
 import { ConnectionDb } from '../connectionAPI';
 import { DataTypes, Sequelize } from 'sequelize';
 
+/*
+Per interagire con l'ORM Sequelize inizialmente è stata messa l'istanza della 
+connessione nella variabile sequelize. 
+Di seguito è stato definito il modello per la tabella Recipe_foods specificando gli attributi 
+con le relative caratteristiche.
+*/
 const sequelize: Sequelize = ConnectionDb.getInstanceConnection();
 
 export const Recipe_foods = sequelize.define('recipe_foods', {
@@ -26,4 +32,8 @@ export const Recipe_foods = sequelize.define('recipe_foods', {
     timestamps: false
 });
 
+/*
+Il seguente comando di Sequelize rimuove il campo 'id' che avrebbe
+agggiunto di default l'ORM.
+*/
 Recipe_foods.removeAttribute('id');

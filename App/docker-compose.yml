@@ -30,7 +30,6 @@ services:
       - .env
     depends_on: 
       - dbmysql
-      - api
 
   websocketclient:
     build: ./Client
