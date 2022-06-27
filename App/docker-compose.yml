@@ -26,6 +26,8 @@ services:
       - DB_NAME=project_pa
       - DB_PORT=3306
       - SECRET_KEY=qwertyuiopasdfghjklzxcvbnm123456
+    env_file:
+      - .env
     depends_on:
       - dbmysql
 
@@ -41,6 +43,8 @@ services:
       - DB_PORT=3306
       - WS_PORT=3001
       - ERROR_PERCENTAGE=15
+    env_file:
+      - .env
     depends_on:
       - dbmysql
 
@@ -54,6 +58,8 @@ services:
       - DB_PORT=3306
       - WS_PORT=3001
       - ERROR_PERCENTAGE=15
+    env_file:
+      - .env
     depends_on:
       - websocketserver
           

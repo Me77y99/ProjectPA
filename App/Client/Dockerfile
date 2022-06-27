@@ -4,5 +4,5 @@ COPY . .
 RUN npm install -g typescript
 RUN npm install
 RUN tsc
-CMD ["node", "Client.js"]
+CMD ["node", "Clients.js"]
 
