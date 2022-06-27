@@ -10,48 +10,50 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_ROOT_PASSWORD= "${MYSQL_ROOT_PASSWORD}"
+      - MYSQL_ROOT_PASSWORD= ""
+      - MYSQL_DATABASE=project_pa
+      - MYSQL_USER=user 
+      - MYSQL_PASSWORD=password
   
   api:
     build: ./API
     ports:
       - 3000:3000
     environment:
-      - DB_HOST= "${DB_HOST}"
-      - DB_USER= "${DB_USER}"
-      - DB_PASSWORD= "${DB_PASSWORD}"
-      - DB_NAME= "${DB_NAME}"
-      - DB_PORT= "${DB_PORT}"
-      - SECRET_KEY= "${SECRET_KEY}"
+      - DB_HOST=localhost
+      - DB_USER=root
+      - DB_PASSWORD= 
+      - DB_NAME=project_pa
+      - DB_PORT=3306
+      - SECRET_KEY=qwertyuiopasdfghjklzxcvbnm123456
     depends_on:
-          - dbmysql
+      - dbmysql
 
   websocketserver:
     build: ./Server
     ports:
       - 3001:3001
     environment:
-      - DB_HOST= "${DB_HOST}"
-      - DB_USER= "${DB_USER}"
-      - DB_PASSWORD= "${DB_PASSWORD}"
-      - DB_NAME= "${DB_NAME}"
-      - DB_PORT= "${DB_PORT}"
-      - WS_PORT= "${WS_PORT}"
-      - ERROR_PERCENTAGE= "${ERROR_PERCENTAGE}"
+      - DB_HOST=localhost
+      - DB_USER=root
+      - DB_PASSWORD= 
+      - DB_NAME=project_pa
+      - DB_PORT=3306
+      - WS_PORT=3001
+      - ERROR_PERCENTAGE=15
     depends_on:
-          - dbmysql
+      - dbmysql
 
   websocketclient:
     build: ./Client
     environment:
-      - DB_HOST= "${DB_HOST}"
-      - DB_USER= "${DB_USER}"
-      - DB_PASSWORD= "${DB_PASSWORD}"
-      - DB_NAME= "${DB_NAME}"
-      - DB_PORT= "${DB_PORT}"
-      - WS_PORT= "${WS_PORT}"
-      - ERROR_PERCENTAGE= "${ERROR_PERCENTAGE}"
+      - DB_HOST=localhost
+      - DB_USER=root
+      - DB_PASSWORD= 
+      - DB_NAME=project_pa
+      - DB_PORT=3306
+      - WS_PORT=3001
+      - ERROR_PERCENTAGE=15
     depends_on:
-      - dbmysql
       - websocketserver
           

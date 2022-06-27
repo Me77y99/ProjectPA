@@ -1,8 +1,10 @@
 FROM node:lts-stretch-slim
-WORKDIR /usr/src/Server
+WORKDIR /usr/src/server
 COPY . .
+RUN npm install -g typescript
 RUN npm install
-RUN npm run tsc
+RUN tsc
 CMD ["node", "Server.js"]
 
+   
    

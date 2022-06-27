@@ -1,6 +1,7 @@
 FROM node:lts-stretch-slim
-WORKDIR /usr/src/API
+WORKDIR /usr/src/client
 COPY . .
+RUN npm install -g typescript
 RUN npm install
-RUN npm run tsc
-CMD ["node", "router.js"] 
+RUN tsc
+CMD ["node", "Client.js"]
