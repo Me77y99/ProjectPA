@@ -5,7 +5,7 @@ import { Order } from './model/Order';
 import { Recipe_foods } from './model/Recipe_foods';
 
 //PER DOCKER
-const wss = new WebSocketServer(`ws://localhost:${process.env.WS_PORT}`);
+const wss = new WebSocketServer({port: process.env.WS_PORT});
 
 //PER DEV
 //const wss = new WebSocketServer({port: process.env.WS_PORT});
