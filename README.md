@@ -1,3 +1,4 @@
+
 # ProjectPA2022
 
 L'applicazione consente di gestire il processo di alimentazione di animali 
@@ -10,21 +11,41 @@ che provvederà a prelevare nelle giuste quantità e nel giusto ordine i vari al
 per soddisfare la ricetta richiesta.
 
 
-## Configurazione e installazione
-Una volta copiato il progetto nel proprio ambiente si dovranno cambiare le variabili di ambiente del file `.env` permettendo così una configurazione personalizzata dell'applicazione
-Il Dockerfile lancerà il comando `npm install` per installare tutte le dipendenze contenute in `package.json` necessarie al funzionamento di `API` e  `Websocket`. Inoltre, verrà lanciato lo script `seed.sql`, il quale creerà e popolerà le seguenti tabelle: 
+## Utilizzo tramite docker-compose
+### API
+Una volta copiato il repository nel proprio ambiente basterà posizionarsi da terminale nella cartella ProjectPA/App. Fatto ciò nella finestra dovrà essere lanciato il comando:
+> docker-compose up api
 
-  >  - users: contiene informazioni sugli utenti
-  >  - foods: contiene informazioni sugli alimenti
-  >  - orders: contiene informazioni sugli ordini di acquisto
-  >  - recipe: contiene informazioni sulle ricette
-  >  - recipe_foods: contiene informazioni per ogni coppia ricetta/alimento insieme a sort e rate
+Tale comando lancerà prima il container che gestisce il database mysql e poi il container che gestisce le API.  Per testare le API basterà avviare il software Postman e importare il file con la collezione delle richieste che si trova nel repository. Per usare le richieste è necessaria un'autenticazione tramite token JWT (ogni richiesta necessita di un ruolo particolare nel token; vedere in seguito). Qui di seguito sono riportati dei token di esempio (già presenti nell'intestazioni delle richieste nella collezione): 
 
-Una volta lanciato il Dockerfile questo esporrà tutti i vari servizi su delle porte, come ad esempio: 
+ - Utente (id:3)
+>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTU3MTg2MjUsImV4cCI6MTY4NzI1NDYyNiwiYXVkIjoiaHR0cDovbG9jYWxob3N0OjgwODAiLCJzdWIiOiIzIiwiaWQiOiIzIiwicm9sZSI6InVzZXIifQ.gjF4f8NuYf7CoRGeQJQ30DvDXsR3MHux-U96qNfBgB4
+ - Admin (id:1)
+>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTU0NTI3MDgsImV4cCI6MTY4Njk4ODcwOSwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwL2NyZWF0ZS1yZWNpcGUiLCJzdWIiOiIxIiwiaWQiOiIxIiwicm9sZSI6ImFkbWluIn0.1T_k18SOhtrVe5F_eQXN_s6TlzxvzhKbeE8gThv77SU
+ - Utente (id:2) che ha creato ordine 4 
+>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTUzNzExMzUsImV4cCI6MTY4NjkwNzEzNiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwL2NyZWF0ZS1vcmRlciIsInN1YiI6IjIiLCJyb2xlIjoidXNlciIsImlkIjoiMiJ9.2LnnP5MajBJlVQ6iuP3Bmzrxbs-mQnko3yH1u4LM5aw    
+ 
 
-    DB: 3306	
-    API: 3000
-    Websocket: 3001
+### Websocket 
+Una volta copiato il repository nel proprio ambiente basterà posizionarsi su due finestre del terminale nella cartella ProjectPA/App. Fatto ciò nella prima finestra dovrà essere lanciato il comando (avvierà il container che gestisce il database e poi il container del Websocket Server):
+> docker-compose up websocketserver
+
+Mentre nella seconda finestra (una volta atteso che gli altri container siano in stato di run): 
+> docker-compose up websocketclient
+
+Una volta lanciati i comandi precedenti nei due terminali si vedrà l'interazione tra il Websocket Server e i 2 Client: 
+
+ - Client_1: Operatore che può prendere in carico un'ordine ed entrare/uscire nelle varie zone di carico
+ - Client_2: Bilancia a bordo veicolo che manda al Server i pesi una volta al secondo.
+### Nota
+All'avvio del container che gestisce il database viene eseguito lo script `seed.sql`, il quale creerà e popolerà le seguenti tabelle: 
+
+  >  - Users: contiene informazioni sugli utenti
+  >  - Foods: contiene informazioni sugli alimenti
+  >  - Orders: contiene informazioni sugli ordini di acquisto
+  >  - Recipe: contiene informazioni sulle ricette
+  >  - Recipe_foods: contiene informazioni per ogni coppia ricetta/alimento insieme a sort e rate
+
    
 ## Architettura
 
