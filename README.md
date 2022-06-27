@@ -13,32 +13,34 @@ per soddisfare la ricetta richiesta.
 
 ## Utilizzo tramite docker-compose
 ### API
-Una volta copiato il repository nel proprio ambiente basterà posizionarsi da terminale nella cartella ProjectPA/App. Fatto ciò nella finestra dovrà essere lanciato il comando:
+Copiare il repository nel proprio ambiente, posizionarsi nella cartella `ProjectPA/App` e lanciare il comando:
+```bash
 > docker-compose up api
-
-Tale comando lancerà prima il container che gestisce il database mysql e poi il container che gestisce le API.  Per testare le API basterà avviare il software Postman e importare il file con la collezione delle richieste che si trova nel repository. Per usare le richieste è necessaria un'autenticazione tramite token JWT (ogni richiesta necessita di un ruolo particolare nel token; vedere in seguito). Qui di seguito sono riportati dei token di esempio (già presenti nell'intestazioni delle richieste nella collezione): 
-
- - Utente (id:3)
->eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTU3MTg2MjUsImV4cCI6MTY4NzI1NDYyNiwiYXVkIjoiaHR0cDovbG9jYWxob3N0OjgwODAiLCJzdWIiOiIzIiwiaWQiOiIzIiwicm9sZSI6InVzZXIifQ.gjF4f8NuYf7CoRGeQJQ30DvDXsR3MHux-U96qNfBgB4
- - Admin (id:1)
->eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTU0NTI3MDgsImV4cCI6MTY4Njk4ODcwOSwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwL2NyZWF0ZS1yZWNpcGUiLCJzdWIiOiIxIiwiaWQiOiIxIiwicm9sZSI6ImFkbWluIn0.1T_k18SOhtrVe5F_eQXN_s6TlzxvzhKbeE8gThv77SU
- - Utente (id:2) che ha creato ordine 4 
->eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTUzNzExMzUsImV4cCI6MTY4NjkwNzEzNiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwL2NyZWF0ZS1vcmRlciIsInN1YiI6IjIiLCJyb2xlIjoidXNlciIsImlkIjoiMiJ9.2LnnP5MajBJlVQ6iuP3Bmzrxbs-mQnko3yH1u4LM5aw    
- 
+```
+che avvierà il container per la gestione del database mysql e poi il container che delle API.  Per testare le API avviare Postman (importare file con la collezione delle richieste). Le richieste necessitano di token JWT (vedere in seguito). Di seguito sono riportati dei token di esempio: 
+ - **Utente ( id:3 ):** ```eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTU3MTg2MjUsImV4cCI6MTY4NzI1NDYyNiwiYXVkIjoiaHR0cDovbG9jYWxob3N0OjgwODAiLCJzdWIiOiIzIiwiaWQiOiIzIiwicm9sZSI6InVzZXIifQ.gjF4f8NuYf7CoRGeQJQ30DvDXsR3MHux-U96qNfBgB4```
+ - **Admin ( id:1 ):**
+```eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTU0NTI3MDgsImV4cCI6MTY4Njk4ODcwOSwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwL2NyZWF0ZS1yZWNpcGUiLCJzdWIiOiIxIiwiaWQiOiIxIiwicm9sZSI6ImFkbWluIn0.1T_k18SOhtrVe5F_eQXN_s6TlzxvzhKbeE8gThv77SU```
+ - **Utente ( id: 2 ) creatore degli ordini:**
+```eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTU0NTI3MDgsImV4cCI6MTY4Njk4ODcwOSwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwL2NyZWF0ZS1yZWNpcGUiLCJzdWIiOiIxIiwiaWQiOiIxIiwicm9sZSI6ImFkbWluIn0.1T_k18SOhtrVe5F_eQXN_s6TlzxvzhKbeE8gThv77SU```
 
 ### Websocket 
-Una volta copiato il repository nel proprio ambiente basterà posizionarsi su due finestre del terminale nella cartella ProjectPA/App. Fatto ciò nella prima finestra dovrà essere lanciato il comando (avvierà il container che gestisce il database e poi il container del Websocket Server):
+Copiare il repository nel proprio ambiente, posizionarsi nella cartella `ProjectPA/App` e lanciare il comando (avvierà il container del database e quello per il Websocket Server):
+```bash
 > docker-compose up websocketserver
+```
 
-Mentre nella seconda finestra (una volta atteso che gli altri container siano in stato di run): 
+In una seconda finestra , una volta attesi gli altri container, lanciare : 
+```bash
 > docker-compose up websocketclient
+```
 
-Una volta lanciati i comandi precedenti nei due terminali si vedrà l'interazione tra il Websocket Server e i 2 Client: 
+Il risultato sarà la stampa a terminale dell'interazione tra il Websocket Server e i due Client: 
 
  - Client_1: Operatore che può prendere in carico un'ordine ed entrare/uscire nelle varie zone di carico
  - Client_2: Bilancia a bordo veicolo che manda al Server i pesi una volta al secondo.
-### Nota
-All'avvio del container che gestisce il database viene eseguito lo script `seed.sql`, il quale creerà e popolerà le seguenti tabelle: 
+### Database Mysql
+All'avvio del container `dbmysql` viene eseguito lo script `seed.sql`, il quale creerà e popolerà le seguenti tabelle: 
 
   >  - Users: contiene informazioni sugli utenti
   >  - Foods: contiene informazioni sugli alimenti
@@ -152,7 +154,7 @@ Nel body della richiesta vanno specificati il nome dell'alimento di cui si vuole
 ```
 
 ## Websocket Reference
-Nella directory `App/Websocket` è incapsulato un back-end per la gestione di un flusso di dati che proviene da due websocket definite in `Clients.ts`. Queste si connettono ad un WebSocketServer (`Server.ts`) che può essere interrogato alla porta `WS_PORT` definita nel file `.env`. Tutti i messaggi che vengono scambiati tra i client e il server vengono generati da l'apposita `factoryMessages`.
+Nella directory `App/Server` è incapsulato il back-end per la gestione di un flusso di dati che proviene da due Websocket definite in `App/Client/Clients.ts`. Queste si connettono ad un WebSocket Server (`Server.ts`) che può essere interrogato alla porta `WS_PORT` definita nel file `.env`. Tutti i messaggi che vengono scambiati tra i client e il server vengono generati ad hoc dall'apposita `factoryMessages`.
 
 
 ## Authors
