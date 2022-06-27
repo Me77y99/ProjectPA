@@ -56,16 +56,13 @@ FUNZIONE MIDDLEWARE PER IL CONTROLLO DELLA PRESENZA DI UN DETERMINATO ALIMENTO A
 Questa funzione viene raggiunta da due rotte: /create-recipe e /check-availability.
 All'interno della funzione viene generato un array di stringhe contenente i nomi degli alimenti richiesti o dalla ricetta che si vuole creare
 oppure dalla richiesta di visualizzazione delle giacenze.
-
 Per popolare l'array viene processato l'elenco degli alimenti, contenuto nel body della request, prima con map per rendere tutti i nomi in maiuscolo
 e successivamente tramite filter per eliminare eventuali doppioni.
 (Nel caso create /create-recipe l'univocità degli alimenti nella request è già stata verificata quindi il filter non altera l'input)
-
 Tramite un ciclo for viene effettuato il controllo della presenza degli alimenti nel DB, tramite la funzione sequelize .count
 che conta il numero di istanze che rispettano la condizione where.
 Nel nostro caso all'interno del DB non è previsto che nella tabella degli alimenti siano presenti alimenti con lo stesso nome, quindi,
 o viene trovata esattamente un'istanza oppure l'alimento non è presente nel DB.
-
 Nel caso ci fossero degli alimenti non presenti nel DB questi vengono inseriti in un apposito Array che successivamente viene inserito nell'errore.
 */
 export async function verifyFoodsInDB(req: any, res:any, next: any): Promise<void>{

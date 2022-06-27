@@ -1,3 +1,8 @@
+/*
+Factory per la comunicazione di eventuali errori commessi nel processo di esecuzione di un ordine e conseguente cambio di status. 
+Preliminarmente è stata definita l'interfaccia Message da cui tutti i tipi di comunicazioni ereditano.
+Ogni classe effettuerà l'override di attribuiti e metodi.
+*/
 export interface  Message {
     status ? : number;
     recived ? : any;
@@ -137,6 +142,13 @@ export enum MsgEnum {
     completeOrderFAIL
 }
 
+/* 
+Definizione della classe che ci permetterà di istanziare la factory esternamente.
+Il metodo getMessage() in base al tipo di messaggio ritorna l'istanza della classe specifica.
+Il metodo getMessageResponse() ritorna la risposta che verrà lanciata al client che ha inviato il messaggio al server al cui interno
+verranno inoltrati lo status del'ordine per conesntire o negare l'esecuzione dell'azione successiva da parte del client ed altri eventuali
+dati aggiuntivi a seconda della comunicazione inoltrata inizialmente dal client.
+*/
 export class MessageFactory {
     async getMessageResponse(Message_type: MsgEnum , ws: any, recived ? : any, num_Ingredients ? : number) {
         await ws.send(JSON.stringify(this.getMessage(Message_type, recived, num_Ingredients).getMsg()))

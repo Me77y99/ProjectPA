@@ -9,7 +9,6 @@ export function verifyUser(req: any, res:any, next: any): void{
     req.user.role === "user" ? next() : next("Solo gli utenti possono effetturare la creazione di un ordine");
 }
 
-
 /*
 FUNZIONE MIDDLEWARE PER VERIFICARE CHE IL RUOLO DELL'UTENTE SIA ADMIN
 

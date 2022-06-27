@@ -4,11 +4,13 @@ import * as midd_functions_orders from "./midd_functions_Orders";
 import * as midd_functions_recipes from "./midd_functions_Recipes";
 import * as midd_functions_roles from "./midd_functions_Roles";
 
-//In questo file vengono generati gli elenchi dei middlewares che verranno utilizzati dalle rispettive rotte
-//al fine di eseguire i controlli di conformità sulla request effettuata dal client e successivamente sull'input
-//contenuto nel body della request.
+/*
+In questo file vengono generati gli elenchi dei middlewares che verranno utilizzati dalle rispettive rotte
+al fine di eseguire i controlli di conformità sulla request effettuata dal client e successivamente sull'input
+contenuto nel body della request.
+*/
 
-//Per semplicità è stata creata questa variabile d'appoggio contenente quelle funzioni middleware che utilizzate
+//Per semplicità è stata creata la seguente variabile d'appoggio contenente quelle funzioni middleware utilizzate
 //da tutte le rotte.
 const header_midd = [
     midd_functions_general.verifyHeaderAuthorization,

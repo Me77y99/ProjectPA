@@ -3,11 +3,10 @@ import { Sequelize } from 'sequelize';
 
 /*
 Seguendo il pattern Singleton è stata creata la classe ConnectionDb che instaurerà la connessione
-tramite al database in modo univoco evitando istanze multiple. La connesione vera e propria si crea
-nel costruttore (privato) attraverso l'ORM Sequelize. Nell'istanza di tale classe vengono passati
-tutti i parametri per la connesione 
+verso il database in modo univoco evitando istanze multiple.
+La connesione vera e propria si crea nel costruttore (privato) attraverso l'ORM Sequelize. 
+Nell'istanza di tale classe vengono forniti in input tutti i parametri necessari alla connesione.
 */
-
 export class ConnectionDb {
 	
     private static _instance: ConnectionDb;
@@ -23,7 +22,7 @@ export class ConnectionDb {
 		});
 	}
 
-// Metodo che evita la creazione di istanze multiple della connessione 
+    // Questo metodo evita la creazione di istanze multiple della connessione 
 	public static getInstanceConnection(): Sequelize {
         if (!ConnectionDb._instance) {
             this._instance = new ConnectionDb();

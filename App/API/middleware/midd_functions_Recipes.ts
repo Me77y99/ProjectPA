@@ -4,7 +4,6 @@ import { Recipe } from "../model/Recipe";
 FUNZIONE MIDDLEWARE PER CONTROLLARE CHE LA RICETTA DI CUI SI È RICHIESTA LA CREAZIONE NON ABBIA LO STESSO NOME DI UNA RICETTA PRE-ESISTENTE
 
 Questa funzione viene raggiunta dalla rotta /create-recipe
-
 Verifica che nel DB non sia presente una ricetta con lo stesso nome di quella che si è richiesto di creare.
 */
 export async function verifyExistingRecipe(req: any, res:any, next: any){
@@ -18,7 +17,6 @@ export async function verifyExistingRecipe(req: any, res:any, next: any){
 FUNZIONE MIDDLEWARE PER CONTROLLARE LA CONFORMITÀ DEI RATE NELLA RICETTA DA CREARE
 
 Questa funzione viene raggiunta dalla rotta /create-recipe
-
 Verifica che la somma dei rate, espressi negli ingredienti che compongono la ricetta, sia conforme, ovvero, uguale a 100.
 */
 export function verifyRateSum(req: any, res:any, next: any){
@@ -32,12 +30,10 @@ export function verifyRateSum(req: any, res:any, next: any){
 
 }
 
-
 /*
 FUNZIONE MIDDLEWARE PER CONTROLLARE LA PRESENZA DI ELEMENTI DUPLICATI NELL'ELENCO DEGLI INGREDIENTI DELLA RICETTA
 
 Questa funzione viene raggiunta dalla rotta /create-recipe
-
 Verifica all'interno dell'elenco degli ingredienti che compongono la ricetta non siano presenti alimenti con lo stesso nome.
 Per fare questo viene popolato un array di stringhe prendendo l'elenco degli alimenti nel body della request e processandolo con
 map per rendere tutti i nomi in maiuscolo, successivamente con una prima filter per conservare tutti gli elementi duplicati nell'elenco

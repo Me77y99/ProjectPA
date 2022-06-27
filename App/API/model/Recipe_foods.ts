@@ -33,7 +33,6 @@ export const Recipe_foods = sequelize.define('recipe_foods', {
 });
 
 /*
-Il seguente comando di Sequelize rimuove il campo 'id' che avrebbe
-agggiunto di default l'ORM.
+Il seguente comando di Sequelize rimuove il campo 'id' che avrebbe aggiunto di default l'ORM.
 */
 Recipe_foods.removeAttribute('id');

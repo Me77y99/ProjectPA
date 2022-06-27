@@ -55,7 +55,6 @@ Il metodo getErrorResponse() ritorna la risposta che verrà lanciata al client d
 in status verrà inoltrato l'attributo error_code specifico; mentre nella send andrà il messaggio
 estrapolato tramite il getMsg()
 */
-
 export class ErrorFactory {
     getErrorResponse(error_type: ErrEnum , res: any) {
         return res.status(this.getError(error_type).error_code)

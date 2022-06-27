@@ -1,7 +1,6 @@
 import { ConnectionDb } from '../connectionAPI';
 import { DataTypes, Sequelize } from 'sequelize';
 
-
 /*
 Per interagire con l'ORM Sequelize inizialmente è stata messa l'istanza della 
 connessione nella variabile sequelize. 

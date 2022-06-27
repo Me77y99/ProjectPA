@@ -4,9 +4,6 @@ require('dotenv').config({path : './../../.env'})
 
 let factory:ErrorFactory  = new ErrorFactory();
 
-
-
-
 //FUNZIONE MIDDLEWARE PER VERIFICARE LA PRESENZA DELL'HEADER AUTHORIZATION NELLA REQUEST
 export function verifyHeaderAuthorization (req: any, res:any, next: any): void{
     req.headers.authorization ? next() : next(factory.getErrorResponse(ErrEnum.HeaderAuthEmpty , res));
