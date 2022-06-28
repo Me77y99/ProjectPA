@@ -23,8 +23,8 @@ CREATE TABLE `Foods` (
 --
 
 INSERT INTO `Foods` (`Id`, `Name`, `Quantity`) VALUES
-(1, 'Soja ', '120.00'),
-(2, 'Crusca ', '115.00'),
+(1, 'Soja', '120.00'),
+(2, 'Crusca', '115.00'),
 (3, 'Barbabietola', '150.00'),
 (4, 'Mais', '200.00'),
 (5, 'Orzo ', '110.00'),

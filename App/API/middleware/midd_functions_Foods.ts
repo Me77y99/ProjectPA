@@ -70,7 +70,7 @@ export async function verifyFoodsInDB(req: any, res:any, next: any): Promise<voi
     let recipe_foods_names_unavailable :Array<String> = [];
     
     try {
-        let foods_unique_name :Array<String> = req.body.foods.map((item:any) => item.name.toUpperCase())
+        let foods_unique_name :Array<String> = req.body.foods.map((item:any) => item.name)
         .filter((value : string, index :number, self :Array<String>) => self.indexOf(value) === index); 
   
         for(let food of foods_unique_name){
