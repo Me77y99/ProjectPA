@@ -2,16 +2,16 @@ import {webSocket} from 'rxjs/webSocket';
 require('dotenv').config({path : './../.env'});
 (global as any).WebSocket = require('ws');
 
-/*
+
 //DEFINIZIONE DELLA PORTA DI COLLEGAMENTO AL SERVER PER DOCKER
 const Client_1 = webSocket(`ws://websocketserver:${process.env.WS_PORT}`); //Operatore
 const Client_2 = webSocket(`ws://websocketserver:${process.env.WS_PORT}`); //Bilancia a bordo macchina 
-*/
 
-//DEFINIZIONE DELLA PORTA DI COLLEGAMENTO AL SERVER PER FASE DI SVILUPPO IN LOCALE
+/*
+DEFINIZIONE DELLA PORTA DI COLLEGAMENTO AL SERVER PER FASE DI SVILUPPO IN LOCALE
 const Client_1 = webSocket(`ws://localhost:${process.env.WS_PORT}`); //Operatore
 const Client_2 = webSocket(`ws://localhost:${process.env.WS_PORT}`); //Bilancia a bordo macchina
-
+*/
 let check1: any
 
 /*
