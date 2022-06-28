@@ -157,25 +157,48 @@ Nel body della richiesta vanno specificati il nome dell'alimento di cui si vuole
 ## Websocket Reference
 Nella directory `App/Server` è incapsulato il back-end per la gestione di un flusso di dati che proviene da due Websocket definite in `App/Client/Clients.ts`. Queste si connettono ad un WebSocket Server (`Server.ts`) che può essere interrogato alla porta `WS_PORT` definita nel file `.env`. Tutti i messaggi che vengono scambiati tra i client e il server vengono generati ad hoc dall'apposita `factoryMessages`.
 
-
-
-[![Watch the video](https://yon.fun/content/images/2019/12/WebSocket-with-RxJS-2.png)](https://github.com/Me77y99/ProjectPA/blob/main/Client-Server_WebSocketComm720p.mp4)
-
+[gif](https://github.com/Me77y99/ProjectPA/blob/main/Client-Server_WebSocketComm1080p.gif)
 
 ## Diagrammi UML
 
 ### Use Case 
 ![Use Case Diagram](https://github.com/Me77y99/ProjectPA/blob/main/UML/Use%20Case.png)
 ### Sequence Diagrams
+
+ - API-check-avaiability-all
 ![API-check-avaiability-all](https://github.com/Me77y99/ProjectPA/blob/main/UML/API-check-avaiability-all.png)
+
+ - API-check-availability
 ![API-check-availability](https://github.com/Me77y99/ProjectPA/blob/main/UML/API-check-availability.png)
+
+ - API-create-order
 ![API-create-order](https://github.com/Me77y99/ProjectPA/blob/main/UML/API-create-order.png)
+
+ - API-order-state
 ![API-order-state](https://github.com/Me77y99/ProjectPA/blob/main/UML/API-order-state.png)
+
+ - API-update-storage
 ![API-update-storage](https://github.com/Me77y99/ProjectPA/blob/main/UML/API-update-storage.png)
+
+ - Websocket Communication Sequence
 ![Websocket Communication Sequence](https://github.com/Me77y99/ProjectPA/blob/main/UML/WebsocketCommunicationSequence.png)
 
 ## Pattern utilizzati 
 
+### Model e Controller 
+Tutte le informazioni e i dati contenuti nel dominio del sistema (con riferimento al database) sono stati definiti attraverso dei **modelli**. Ciascun modello è stato implementato attraverso l'ORM Sequelize consentendogli di interfacciarsi con il database. Questo ci ha permesso di non effettuare query in modo esplicito ma di usare i metodi offerti dalla libreria.
+
+Il **Controller** è la componente preposta alla gestione della business logic, alla base delle API, a seguito della validazione della richiesta ricevuta. Questo permette una separazione logica che consente una migliore organizzazione nella gerarchia dell'applicazione.
+### Creational Pattern: Factory e  Singleton
+Il pattern **Factory** è stato utilizzato sia per gli errori nelle API che nello scambio di messaggio tra le Websocket. Questo ci ha permesso di astrarre la creazione di due famiglie diverse di oggetti in un'altra componente. Ciò è stato di grande utilità soprattutto nella Websocket, essendoci un grande varietà e quantità di messaggi, nella comunicazione tra Cliente e Server.
+
+Il **Singleton** invece, è stato usato nei file di connessione al database usati da API e dal Websocket Server. Questo ci ha permesso di mantenere una singola istanza di connessione in ogni container dando una maggiore sicurezza nell'interazione con il database. 
+### Behavioral Pattern: Chain of Responsibility e Reactive Programming
+La **Chain of Responsability** ci ha permesso di eseguire molteplici Middleware all'atto della chiamata di ogni rotta delle API. Queste funzioni dunque, comporranno una sorta "di catena di handler". Il passaggio attraverso tale catena avviene tramite il comando next(). Questo pattern permette di validare le richieste sottoposte dal client in un modo molto efficiente e facile da organizzare per lo sviluppatore.
+
+La **Reactive Programming** è stata adottata nella comunicazione tra le Websocket. I due Client nel momento in cui eseguono il `subscribe()` iniziano ad osservare il Server, che a sua volta ad ogni messaggio ricevuto gestirà la richiesta notificando il Client. Questo ci ha permesso di avere un sistema Push durante lo scambio di messaggi, evitando la logica Pull molto più complessa e inefficiente.
+
+ 
 
 
 ## Authors
