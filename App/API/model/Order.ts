@@ -9,7 +9,7 @@ con le relative caratteristiche.
 */
 const sequelize: Sequelize = ConnectionDb.getInstanceConnection();
 
-export const Order = sequelize.define('order', {
+export const Order = sequelize.define('Order', {
     id: {
         type: DataTypes.INTEGER(),
         primaryKey: true,
@@ -33,6 +33,6 @@ export const Order = sequelize.define('order', {
     }
 }, 
 {
-    modelName: 'order',
+    modelName: 'Order',
     timestamps: false
 });
