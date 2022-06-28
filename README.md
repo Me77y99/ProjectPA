@@ -157,7 +157,7 @@ Nel body della richiesta vanno specificati il nome dell'alimento di cui si vuole
 ## Websocket Reference
 Nella directory `App/Server` è incapsulato il back-end per la gestione di un flusso di dati che proviene da due Websocket definite in `App/Client/Clients.ts`. Queste si connettono ad un WebSocket Server (`Server.ts`) che può essere interrogato alla porta `WS_PORT` definita nel file `.env`. Tutti i messaggi che vengono scambiati tra i client e il server vengono generati ad hoc dall'apposita `factoryMessages`.
 
-[gif](https://github.com/Me77y99/ProjectPA/blob/main/Client-Server_WebSocketComm1080p.gif)
+![gif](https://github.com/Me77y99/ProjectPA/blob/main/Client-Server_WebSocketComm1080p.gif)
 
 ## Diagrammi UML
 
