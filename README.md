@@ -291,7 +291,7 @@ La **Reactive Programming** è stata adottata nella comunicazione tra le Websock
  
 
 
-## Authors
+## Autori
 
 - [@Mattia Scuriatti](https://github.com/Me77y99)
 - [@Francesco Giostra](https://github.com/Franz95)
