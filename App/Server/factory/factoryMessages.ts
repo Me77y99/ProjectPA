@@ -6,7 +6,7 @@ Ogni classe effettuerà l'override di attribuiti e metodi.
 export interface  Message {
     status ? : number;
     recived ? : any;
-    num_Ingredients ? : number;
+    ingredients ? : any;
     getMsg():Object;
 }
 
@@ -23,14 +23,14 @@ export class connectionEstablished implements Message {
 export class getChargingInfoOK implements Message {
     status: number;
     recived: any;
-    num_Ingredients: number;
-    constructor(recived: any, num_Ingredients: number){
+    ingredients: any;
+    constructor(recived: any, ingredients: any){
         this.status = 1;
-        this.num_Ingredients = num_Ingredients;
+        this.ingredients = ingredients;
         this.recived = recived;
     }
     getMsg():Object {
-        return {status: this.status, num_Ingredients: this.num_Ingredients, message: `Ordine ${this.recived.id_order} preso in carico!\n`};
+        return {status: this.status, ingredients: this.ingredients, message: `Ordine ${this.recived.id_order} preso in carico!\n`};
     }
 }
 
@@ -49,14 +49,14 @@ export class getChargingInfoFAIL implements Message {
 export class checkSortingOK implements Message {
     status: number;
     recived: any;
-    num_Ingredients: number;
-    constructor(recived: any, num_Ingredients: number){
+    ingredients: any;
+    constructor(recived: any, ingredients: any){
         this.status = 1;
-        this.num_Ingredients = num_Ingredients;
+        this.ingredients = ingredients;
         this.recived = recived;
     }
     getMsg():Object {
-        return {status: this.status, num_Ingredients: this.num_Ingredients, message: `Sei entrato nella zona dell'alimento con id: ${this.recived.id_alimento}!\n`};
+        return {status: this.status, ingredients: this.ingredients, message: `Sei entrato nella zona dell'alimento con id: ${this.recived.id_alimento}!\n`};
     }
 }
 
@@ -75,14 +75,14 @@ export class checkSortingFAIL implements Message {
 export class checkQuantityOK implements Message {
     status: number;
     recived: any;
-    num_Ingredients: number;
-    constructor(recived: any, num_Ingredients: number){
+    ingredients: any;
+    constructor(recived: any, ingredients: any){
         this.status = 1;
-        this.num_Ingredients = num_Ingredients;
+        this.ingredients = ingredients;
         this.recived = recived;
     }
     public getMsg():Object {
-        return {status: this.status, num_Ingredients: this.num_Ingredients, message: `Sei uscito dalla zona di carico dell'alimento: ${this.recived.id_alimento}! La bilancia restituisce un peso conforme!\n`};
+        return {status: this.status, ingredients: this.ingredients, message: `Sei uscito dalla zona di carico dell'alimento: ${this.recived.id_alimento}! La bilancia restituisce un peso conforme!\n`};
     }
 }
 
@@ -109,7 +109,6 @@ export class communicateWeight implements Message {
 }
 
 export class completeOrderOK implements Message {
-   
     recived: any;
     constructor(recived: any){
         this.recived = recived;
@@ -150,30 +149,30 @@ verranno inoltrati lo status del'ordine per conesntire o negare l'esecuzione del
 dati aggiuntivi a seconda della comunicazione inoltrata inizialmente dal client.
 */
 export class MessageFactory {
-    async getMessageResponse(Message_type: MsgEnum , ws: any, recived ? : any, num_Ingredients ? : number) {
-        await ws.send(JSON.stringify(this.getMessage(Message_type, recived, num_Ingredients).getMsg()))
+    async getMessageResponse(Message_type: MsgEnum , ws: any, recived ? : any, ingredients ? : any) {
+        await ws.send(JSON.stringify(this.getMessage(Message_type, recived, ingredients).getMsg()))
     }
     constructor(){}
-    getMessage (type:MsgEnum, recived ? : any, num_Ingredients ? : number):Message{
+    getMessage (type:MsgEnum, recived ? : any, ingredients ? : any):Message{
         let retval:Message = null;
         switch (type){
             case MsgEnum.connectionEstablished:
                 retval = new connectionEstablished();
                 break;
             case MsgEnum.getChargingInfoOK:
-                retval = new getChargingInfoOK(recived, num_Ingredients);
+                retval = new getChargingInfoOK(recived, ingredients);
                 break;
             case MsgEnum.getChargingInfoFAIL:
                 retval = new getChargingInfoFAIL(recived);
                 break;
             case MsgEnum.checkSortingOK:
-                retval = new checkSortingOK(recived, num_Ingredients);
+                retval = new checkSortingOK(recived, ingredients);
                 break;
             case MsgEnum.checkSortingFAIL:
                 retval = new checkSortingFAIL(recived);
                 break;
             case MsgEnum.checkQuantityOK:
-                retval = new checkQuantityOK(recived, num_Ingredients);
+                retval = new checkQuantityOK(recived, ingredients);
                 break;
             case MsgEnum.checkQuantityFAIL :
                 retval = new checkQuantityFAIL(recived);

@@ -12,9 +12,7 @@ const Client_2 = webSocket(`ws://websocketserver:${process.env.WS_PORT}`); //Bil
 const Client_1 = webSocket(`ws://localhost:${process.env.WS_PORT}`); //Operatore
 const Client_2 = webSocket(`ws://localhost:${process.env.WS_PORT}`); //Bilancia a bordo macchina
 
-
 let check1: any
-
 
 /*
 I seguenti blocchi Client1.subscribe e Client2.subscribe, permettono ai due client di instaurare un canale
@@ -85,33 +83,30 @@ all'interno del for la Bilancia inizia ad inviare i primi dati al server con cad
 designata dall'utente nell'array dato in input a inizio procedura.
 Il server controllerà che la zona di carico segnalata dal client sia conforme con il sorting degli ingredienti ricavato dal DB e consentirà l'azione successiva (status=1)
 oppure restituirà un messaggio di errore vietando l'azione successiva (status=0)
-Dopodiché come ultima azione del ciclo for viene chiamata la funzione successiva di controllo del peso caricato a bordo.
-Infine; all'uscita dal for sia in caso di conclusione naturale del ciclo sia in presenza di errori (status=0) viene chiamata la funzione finale di completamento dell'ordine.
-*/
-/*
-In questa funzione viene fatto un controllo dello status inviato dal server per verificare che l'azione sia consentita tramite un blocco if-else
+È stato inserito un timeout di 1 secondo con funzione vuota per permettere al server di comunicare in maniera corretta lo status per la prossima azione descritta
+nel blocco if-else immediatamente successivo.
 Nel caso in cui l'azione sia consentita la bilancia inizierà ad inviare al server la variazione del peso caricato a bordo con cadenza pari ad 1 secondo;
 la quantità che viene aggiunta al peso in entrata alla zona di carico è stata specificata dall'utente nella dichiarazione degli input di inizio procedura.
 Dopo 6 secondi il Client_1 comunicherà al server l'uscita dalla zona di carico attuale; il server confronterà quindi l'ultimo valore pesato dalla bilancia con
 i valori di quantità minima e massima prevista per quello step della ricetta per controllare il rispetto del massimo errore percentuale consentito.
 In caso di peso conforme lo status viene mantenuto a valore 1 permettendo quindi di eseguire la successiva iterazione del ciclo for; altrimenti viene restituito
 un messaggio di errore causa peso non conforme e lo status impostato a 0 così da forzare l'uscita dal ciclo for della funzione precedentemente descritta.
+Infine; all'uscita dal for sia in caso di conclusione naturale del ciclo sia in presenza di errori (status=0) viene chiamata la funzione finale di completamento dell'ordine.
 */
 async function communicateToServerToCheckSortingAndQuantity(ingredients : Array<number>, id_order: number, add_weight:number){
   let intervalID : any;
-  let weight: number = 0
+  let weight: number = 0;
 
-  for( let i:number=0; i < check1.num_Ingredients && check1.status == 1; i++){
+  for( let i:number=0; check1.status == 1 && i < check1.ingredients.length; i++){
     intervalID = setInterval(() => {(Client_2.next({ operation: 3, weight: weight}));}, 1000);
     
-    await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 1, id_order: id_order, id_alimento: ingredients[i]}));}, 3000));
+    await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 1, id_order: id_order, id_alimento: ingredients[i], index: i, foods: check1.ingredients}));}, 3000));
     clearInterval(intervalID);
     await new Promise( resolve => setTimeout(() => {resolve({});}, 1000));
     
-    //await new Promise( resolve => setTimeout(() => {resolve(communicateToServerToCheckQuantity(intervalID, ingredients[i] , id_order, add_weight, weight));}, 1000)); //permette di attendere il cambio di check1.status in caso di fallimento dell'ordine causa sorting
     if(check1.status == 1){
       intervalID = setInterval(() => {(weight= (weight+add_weight), Client_2.next({operation: 3, weight: weight}));}, 1000);
-      await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 2, id_order: id_order, id_alimento: ingredients[i]}));}, 6000));    
+      await new Promise( resolve => setTimeout(() => {resolve(Client_1.next({ operation: 2, id_order: id_order, id_alimento: ingredients[i], index: i, foods: check1.ingredients, weight: weight}));}, 6000));    
       clearInterval(intervalID);
       await new Promise( resolve => setTimeout(() => {resolve({});}, 1000));
     }
@@ -122,8 +117,6 @@ async function communicateToServerToCheckSortingAndQuantity(ingredients : Array<
   }
   await new Promise (resolve => resolve(communicateToServerToCompletingOrder(id_order)));
 }
-
-
 
 /*
 Una volta terminato il ciclo for precedentemente descritto, viene chiamata questa funzione che semplicemente controlla il valore
