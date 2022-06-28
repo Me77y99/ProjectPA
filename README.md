@@ -1,4 +1,5 @@
 
+
 # ProjectPA2022
 
 L'applicazione consente di gestire il processo di alimentazione di animali 
@@ -12,7 +13,7 @@ per soddisfare la ricetta richiesta.
 
 
 ## Utilizzo tramite docker-compose
-### API
+#### API
 Copiare il repository nel proprio ambiente, posizionarsi nella cartella `ProjectPA/App` e lanciare il comando:
 ```bash
 > docker-compose up api
@@ -24,7 +25,7 @@ che avvierà il container per la gestione del database mysql e poi il container 
  - **Utente ( id: 2 ) creatore degli ordini:**
 ```eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTU0NTI3MDgsImV4cCI6MTY4Njk4ODcwOSwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwL2NyZWF0ZS1yZWNpcGUiLCJzdWIiOiIxIiwiaWQiOiIxIiwicm9sZSI6ImFkbWluIn0.1T_k18SOhtrVe5F_eQXN_s6TlzxvzhKbeE8gThv77SU```
 
-### Websocket 
+#### Websocket 
 Copiare il repository nel proprio ambiente, posizionarsi nella cartella `ProjectPA/App` e lanciare il comando (avvierà il container del database e quello per il Websocket Server):
 ```bash
 > docker-compose up websocketserver
@@ -39,7 +40,7 @@ Il risultato sarà la stampa a terminale dell'interazione tra il Websocket Serve
 
  - Client_1: Operatore che può prendere in carico un'ordine ed entrare/uscire nelle varie zone di carico
  - Client_2: Bilancia a bordo veicolo che manda al Server i pesi una volta al secondo.
-### Database Mysql
+#### Database Mysql
 All'avvio del container `dbmysql` viene eseguito lo script `seed.sql`, il quale creerà e popolerà le seguenti tabelle: 
 
   >  - Users: contiene informazioni sugli utenti
@@ -52,7 +53,7 @@ All'avvio del container `dbmysql` viene eseguito lo script `seed.sql`, il quale 
 ## Architettura
 
 
-## API Reference
+### API Reference
 
 | Route                     | Type   | BearerToken | JWTRole                    |
 | :------------------------ | :----- | :---------- |:------------------------- |
@@ -155,6 +156,26 @@ Nel body della richiesta vanno specificati il nome dell'alimento di cui si vuole
 
 ## Websocket Reference
 Nella directory `App/Server` è incapsulato il back-end per la gestione di un flusso di dati che proviene da due Websocket definite in `App/Client/Clients.ts`. Queste si connettono ad un WebSocket Server (`Server.ts`) che può essere interrogato alla porta `WS_PORT` definita nel file `.env`. Tutti i messaggi che vengono scambiati tra i client e il server vengono generati ad hoc dall'apposita `factoryMessages`.
+
+
+
+[![Watch the video](https://yon.fun/content/images/2019/12/WebSocket-with-RxJS-2.png)](https://github.com/Me77y99/ProjectPA/blob/main/Client-Server_WebSocketComm720p.mp4)
+
+
+## Diagrammi UML
+
+### Use Case 
+![Use Case Diagram](https://github.com/Me77y99/ProjectPA/blob/main/UML/Use%20Case.png)
+### Sequence Diagrams
+![API-check-avaiability-all](https://github.com/Me77y99/ProjectPA/blob/main/UML/API-check-avaiability-all.png)
+![API-check-availability](https://github.com/Me77y99/ProjectPA/blob/main/UML/API-check-availability.png)
+![API-create-order](https://github.com/Me77y99/ProjectPA/blob/main/UML/API-create-order.png)
+![API-order-state](https://github.com/Me77y99/ProjectPA/blob/main/UML/API-order-state.png)
+![API-update-storage](https://github.com/Me77y99/ProjectPA/blob/main/UML/API-update-storage.png)
+![Websocket Communication Sequence](https://github.com/Me77y99/ProjectPA/blob/main/UML/WebsocketCommunicationSequence.png)
+
+## Pattern utilizzati 
+
 
 
 ## Authors
