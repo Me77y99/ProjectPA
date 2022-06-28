@@ -81,10 +81,39 @@ questo ci permette di poter visualizzare la disponibilità di 1 o più alimenti 
     ]
 }
 ```  
+#### Test
+```json 
+Request
+{
+    "foods": [
+        {"name" : "Soja"},
+        {"name" : "Crusca"}
+    ]
+}
+
+Response 
+[
+    "Soja , disponibilità: 120.00",
+    "Crusca , disponibilità: 115.00"
+]
+``` 
 
 - ### /check-availability-all
 
 Permette di visualizzare la disponibilità di tutti gli alimenti presenti nel magazzino; essendo una richiesta che coinvolge tutti gli alimenti non è necessaria la presenza di un body JSON per la richiesta.
+#### Test
+```json 
+Response 
+[
+    "Soja , disponibilità: 120.00",
+    "Crusca , disponibilità: 115.00",
+    "Barbabietola, disponibilità: 150.00",
+    "Mais, disponibilità: 200.00",
+    "Orzo , disponibilità: 110.00",
+    "Fave, disponibilità: 180.00"
+]
+```
+
 
 
 - ### /order-state
@@ -98,6 +127,14 @@ Permette di visualizzare lo status di un ordine; è consentita agli utenti di ti
     "order_id": "Inserire id dell'ordine da controllare"
 }
 ```  
+#### Test
+```json 
+Request
+{
+    "order_id": "4"
+}
+Response `Lo status dell'ordine è: CREATO`
+```
 
 - ### /create-order
 
@@ -112,6 +149,17 @@ e la quantità desiderata (Kg).
     "quantity": "Inserire la quantità desiderata(Kg)",
 }
 ```  
+#### Test
+```json 
+Request
+{
+    "recipe_name": "Mangime Bovini",
+    "quantity": "40",
+}
+
+Response `Ordine creato correttamente`
+``` 
+
 
 - ### /create-recipe
 
@@ -138,6 +186,37 @@ Nota: Il valore di sort per l'esecuzione della ricetta viene generato automatica
     ]
 }
 ```
+#### Test
+```json 
+Request
+{
+    "name": "Mangime Suini Bio",
+    "foods": [
+        {
+            "name": "Crusca",
+            "rate": "20"
+        },
+        {
+            "name": "Orzo",
+            "rate": "20"
+        },
+        {
+            "name": "Barbabietola",
+            "rate": "20"
+        },
+        {
+            "name": "Mais",
+            "rate": "20"
+        },
+        {
+            "name": "Soja",
+            "rate": "20"
+        }
+    ]
+}
+
+Response `Ricetta Mangime Suini Bio creata correttamente`
+```
 
 - ### /update-storage
 
@@ -153,6 +232,17 @@ Nel body della richiesta vanno specificati il nome dell'alimento di cui si vuole
     "quantity": "Inserire quantità da aggiungere o togliere (per togliere precedere il numero con -)"
 }
 ```
+#### Test
+```json 
+Request
+{
+    "name": "Fave",
+    "quantity": "15"
+}
+
+Response `La quantità dell'alimento Fave è stata modificata di 15kg ed attualmente è 195.00kg`
+``` 
+
 
 ## Websocket Reference
 Nella directory `App/Server` è incapsulato il back-end per la gestione di un flusso di dati che proviene da due Websocket definite in `App/Client/Clients.ts`. Queste si connettono ad un WebSocket Server (`Server.ts`) che può essere interrogato alla porta `WS_PORT` definita nel file `.env`. Tutti i messaggi che vengono scambiati tra i client e il server vengono generati ad hoc dall'apposita `factoryMessages`.
